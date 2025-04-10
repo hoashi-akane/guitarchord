@@ -2,6 +2,7 @@ package jp.ahoashi.guitarchord
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import jp.ahoashi.guitarchord.entity.TYPE
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -16,33 +17,15 @@ class ChordScreenViewModel
             uiState.update { it.copy(alphabet = alphabet) }
         }
 
-        fun setSharp(sharp: ChordScreenUiState.Sharp) {
+        fun setSharp(sharp: Sharp) {
             uiState.update { it.copy(sharp = sharp) }
         }
 
         data class ChordScreenUiState(
             val alphabet: String?,
             val sharp: Sharp,
-            val type: ChordType?,
+            val type: TYPE?,
         ) {
-            data class ChordType(
-                val type: String,
-                val fingerAlign: Fingers,
-            )
-
-            data class Fingers(
-                val index: IntRange,
-                val middle: IntRange,
-                val ling: IntRange,
-                val little: IntRange,
-            )
-
-            enum class Sharp {
-                DISABLE,
-                SET,
-                UNSET,
-            }
-
             companion object {
                 val Empty =
                     ChordScreenUiState(
@@ -50,6 +33,14 @@ class ChordScreenViewModel
                         sharp = Sharp.UNSET,
                         type = null,
                     )
+            }
+        }
+
+        companion object {
+            enum class Sharp {
+                DISABLE,
+                SET,
+                UNSET,
             }
         }
     }

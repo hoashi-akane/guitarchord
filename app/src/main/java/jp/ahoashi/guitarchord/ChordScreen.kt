@@ -26,6 +26,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import jp.ahoashi.guitarchord.ChordScreenViewModel.Companion.Sharp
 
 @Composable
 fun ChordScreen(
@@ -110,7 +111,9 @@ fun ChordScreen(
             ) { viewModel.setAlphabet(it) }
             SharpOutlineButton(
                 uiState = uiState,
-            ) { viewModel.setSharp(ChordScreenViewModel.ChordScreenUiState.Sharp.SET) }
+            ) {
+                viewModel.setSharp(Sharp.UNSET)
+            }
         }
     }
 }
@@ -147,21 +150,21 @@ fun RowScope.ChordOutlineButton(
 @Composable
 fun RowScope.SharpOutlineButton(
     uiState: ChordScreenViewModel.ChordScreenUiState,
-    setSharp: (ChordScreenViewModel.ChordScreenUiState.Sharp) -> Unit,
+    setSharp: (Sharp) -> Unit,
 ) {
     OutlinedButton(
-        onClick = { setSharp(ChordScreenViewModel.ChordScreenUiState.Sharp.SET) },
+        onClick = { setSharp(Sharp.SET) },
         modifier = Modifier.weight(1f),
         colors =
             ButtonDefaults.outlinedButtonColors(
                 containerColor =
-                    if (uiState.sharp == ChordScreenViewModel.ChordScreenUiState.Sharp.SET) {
+                    if (uiState.sharp == Sharp.SET) {
                         MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.onPrimary
                     },
                 contentColor =
-                    if (uiState.sharp == ChordScreenViewModel.ChordScreenUiState.Sharp.SET) {
+                    if (uiState.sharp == Sharp.SET) {
                         MaterialTheme.colorScheme.onPrimary
                     } else {
                         MaterialTheme.colorScheme.primary
