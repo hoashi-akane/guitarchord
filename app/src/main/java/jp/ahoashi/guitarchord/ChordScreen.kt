@@ -1,7 +1,6 @@
 package jp.ahoashi.guitarchord
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -37,23 +36,33 @@ fun ChordScreen(
     val uiState by viewModel.uiState.collectAsState()
     Column(modifier = modifier.fillMaxHeight().padding(horizontal = 20.dp, vertical = 100.dp)) {
         Row {
-            Column(modifier = Modifier.height(200.dp), verticalArrangement = Arrangement.SpaceAround) {
-                //            Text("6")
-                //            Text("5")
-                //            Text("4")
-                //            Text("3")
-                //            Text("2")
-                //            Text("1")
-            }
-            Canvas(modifier = Modifier.fillMaxWidth().height(200.dp)) {
+            Canvas(modifier = Modifier.fillMaxWidth().padding(start = 20.dp).height(200.dp)) {
+                val offsetY = size.height / 6f
+                val offsetX = size.width / 4f
+                // 開放弦の記号を表示
+                val openStrings = uiState.chord?.type?.openString ?: emptySet()
+                openStrings.forEach {
+                    val textResult = text.measure("○")
+                    // 弦は1始まりなので-1。テキストと線を中心に合わせるため文字分の高さを割って引く
+                    val y = (offsetY * (it - 1)).toFloat() - (textResult.size.height / 2)
+                    drawText(
+                        textResult,
+                        color = Color.Black,
+                        topLeft =
+                            Offset(
+                                x = -(20.dp).toPx(),
+                                y = y,
+                            ),
+                    )
+                }
+
                 drawLine(
                     color = Color.Black,
                     start = Offset(0f, 0f),
                     end = Offset(0f, 200.dp.toPx()),
                     strokeWidth = 2.dp.toPx(),
                 )
-                val offsetY = size.height / 6f
-                val offsetX = size.width / 4f
+                // 基準の線を描画
                 for (i in 0..6) {
                     drawLine(
                         color = Color.LightGray,
@@ -62,7 +71,7 @@ fun ChordScreen(
                         strokeWidth = 2.dp.toPx(),
                     )
                 }
-
+                // フレットの番号を描画
                 for (i in 1..4) {
                     drawLine(
                         color = Color.LightGray,
@@ -70,7 +79,6 @@ fun ChordScreen(
                         end = Offset(x = offsetX * i, y = size.height),
                         strokeWidth = 2.dp.toPx(),
                     )
-
                     drawText(text.measure(i.toString()), color = Color.Black, topLeft = Offset(offsetX * i - (offsetX / 2), -20.dp.toPx()))
                 }
             }

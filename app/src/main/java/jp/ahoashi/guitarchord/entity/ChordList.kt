@@ -14,7 +14,7 @@ import jp.ahoashi.guitarchord.entity.TYPE.SUS4
 
 object ChordList {
     object C {
-        private val cMajor =
+        val cMajor =
             Chord(
                 alphabet = "C",
                 sharp = false,
@@ -193,7 +193,7 @@ object ChordList {
                     ),
             )
 
-        private val map =
+        val map =
             mapOf(
                 MAJOR to cMajor,
                 MINOR to cMinor,
