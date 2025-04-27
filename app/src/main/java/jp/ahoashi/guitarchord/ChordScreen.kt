@@ -19,13 +19,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.ahoashi.guitarchord.ChordScreenViewModel.Companion.Sharp
+import jp.ahoashi.guitarchord.entity.Chord
 
 @Composable
 fun ChordScreen(
@@ -33,13 +37,14 @@ fun ChordScreen(
     viewModel: ChordScreenViewModel = viewModel(),
 ) {
     val text = rememberTextMeasurer(8)
+    val fingerText = rememberTextMeasurer(6)
     val uiState by viewModel.uiState.collectAsState()
     Column(modifier = modifier.fillMaxHeight().padding(horizontal = 20.dp, vertical = 100.dp)) {
         Row {
-            Canvas(modifier = Modifier.fillMaxWidth().padding(start = 20.dp).height(200.dp)) {
+            Canvas(modifier = Modifier.fillMaxWidth().padding(start = 10.dp).height(200.dp)) {
                 val offsetY = size.height / 6f
                 val offsetX = size.width / 4f
-                // 開放弦の記号を表示
+                // 開放弦の記号を表示 TODO: 位置調整が課題だが、○を描画するだけであればCanvasで描画しない方が楽
                 val openStrings = uiState.chord?.type?.openString ?: emptySet()
                 openStrings.forEach {
                     val textResult = text.measure("○")
@@ -50,12 +55,12 @@ fun ChordScreen(
                         color = Color.Black,
                         topLeft =
                             Offset(
-                                x = -(20.dp).toPx(),
+                                x = -(6.dp.toPx() + textResult.size.width),
                                 y = y,
                             ),
                     )
                 }
-
+                // 開始の太線 FIXME :開始位置2フレット目以降の場合は非表示
                 drawLine(
                     color = Color.Black,
                     start = Offset(0f, 0f),
@@ -80,6 +85,24 @@ fun ChordScreen(
                         strokeWidth = 2.dp.toPx(),
                     )
                     drawText(text.measure(i.toString()), color = Color.Black, topLeft = Offset(offsetX * i - (offsetX / 2), -20.dp.toPx()))
+                }
+
+                // 押し弦の位置を描画
+                val fingerAlign = uiState.chord?.type?.fingerAlign
+                val firstFret =
+                    fingerAlign?.let {
+                        listOf(
+                            it.index,
+                            it.middle,
+                            it.ling,
+                            it.little,
+                        ).minOf { it.fret }
+                    } ?: 0
+                fingerAlign?.let {
+                    DrawFinger(textMeasurer = fingerText, name = "人", firstFlet = firstFret, finger = it.index)
+                    DrawFinger(textMeasurer = fingerText, name = "中", firstFlet = firstFret, finger = it.middle)
+                    DrawFinger(textMeasurer = fingerText, name = "薬", firstFlet = firstFret, finger = it.ling)
+                    DrawFinger(textMeasurer = fingerText, name = "小", firstFlet = firstFret, finger = it.little)
                 }
             }
         }
@@ -124,6 +147,39 @@ fun ChordScreen(
             }
         }
     }
+}
+
+private fun DrawScope.DrawFinger(
+    textMeasurer: TextMeasurer,
+    name: String,
+    firstFlet: Int,
+    finger: Chord.FingerPosition,
+) {
+    if (finger.fret == 0) {
+        // フレットが0の場合は開放弦なので表示しない
+        return
+    }
+    val x = (finger.fret - firstFlet) * (this.size.width / 4)
+    val y = finger.string.start * (this.size.height / 6f)
+    drawCircle(
+        color = Color.LightGray,
+        radius = 16.dp.toPx(),
+        center =
+            Offset(
+                x = x.toFloat(),
+                y = y.toFloat(),
+            ),
+    )
+
+    drawText(
+        textLayoutResult = textMeasurer.measure(name),
+        color = Color.Black,
+        topLeft =
+            Offset(
+                x = x.toFloat() - (textMeasurer.measure(name).size.width / 2),
+                y = y.toFloat() - (textMeasurer.measure(name).size.height / 2),
+            ),
+    )
 }
 
 @Composable
