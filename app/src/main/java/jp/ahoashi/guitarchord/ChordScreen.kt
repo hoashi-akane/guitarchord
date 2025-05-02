@@ -1,14 +1,24 @@
 package jp.ahoashi.guitarchord
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.FlowRowOverflow
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -19,18 +29,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.ahoashi.guitarchord.ChordScreenViewModel.Companion.Sharp
 import jp.ahoashi.guitarchord.entity.Chord
+import jp.ahoashi.guitarchord.entity.TYPE
 
+/**
+ * TODO: 表示デザインカスタム機能（文字、記号、アルファベット？）
+ */
 @Composable
 fun ChordScreen(
     modifier: Modifier = Modifier,
@@ -41,6 +56,13 @@ fun ChordScreen(
     val uiState by viewModel.uiState.collectAsState()
     Column(modifier = modifier.fillMaxHeight().padding(horizontal = 20.dp, vertical = 100.dp)) {
         Row {
+            val textColor = MaterialTheme.colorScheme.onSurface
+            val firstLineColor =
+                if (isSystemInDarkTheme()) {
+                    Color.LightGray
+                } else {
+                    Color.Black
+                }
             Canvas(modifier = Modifier.fillMaxWidth().padding(start = 10.dp).height(200.dp)) {
                 val offsetY = size.height / 6f
                 val offsetX = size.width / 4f
@@ -52,7 +74,7 @@ fun ChordScreen(
                     val y = (offsetY * (it - 1)).toFloat() - (textResult.size.height / 2)
                     drawText(
                         textResult,
-                        color = Color.Black,
+                        color = textColor,
                         topLeft =
                             Offset(
                                 x = -(6.dp.toPx() + textResult.size.width),
@@ -62,7 +84,7 @@ fun ChordScreen(
                 }
                 // 開始の太線 FIXME :開始位置2フレット目以降の場合は非表示
                 drawLine(
-                    color = Color.Black,
+                    color = firstLineColor,
                     start = Offset(0f, 0f),
                     end = Offset(0f, 200.dp.toPx()),
                     strokeWidth = 2.dp.toPx(),
@@ -84,7 +106,7 @@ fun ChordScreen(
                         end = Offset(x = offsetX * i, y = size.height),
                         strokeWidth = 2.dp.toPx(),
                     )
-                    drawText(text.measure(i.toString()), color = Color.Black, topLeft = Offset(offsetX * i - (offsetX / 2), -20.dp.toPx()))
+                    drawText(text.measure(i.toString()), color = textColor, topLeft = Offset(offsetX * i - (offsetX / 2), -20.dp.toPx()))
                 }
 
                 // 押し弦の位置を描画
@@ -106,45 +128,93 @@ fun ChordScreen(
                 }
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 100.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            ChordOutlineButton(
-                alphabet = "C",
-                uiState = uiState,
-            ) { viewModel.setAlphabet(it) }
-            ChordOutlineButton(
-                alphabet = "D",
-                uiState = uiState,
-            ) { viewModel.setAlphabet(it) }
-            ChordOutlineButton(
-                alphabet = "E",
-                uiState = uiState,
-            ) { viewModel.setAlphabet(it) }
-            ChordOutlineButton(
-                alphabet = "F",
-                uiState = uiState,
-            ) { viewModel.setAlphabet(it) }
+        AlphabetButtons(uiState, { viewModel.setAlphabet(it) }) {
+            viewModel.setSharp(it)
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            ChordOutlineButton(
-                alphabet = "G",
+        TypeButtons(uiState) { viewModel.setType(it) }
+    }
+}
+
+@Composable
+private fun ColumnScope.AlphabetButtons(
+    uiState: ChordScreenViewModel.ChordScreenUiState,
+    setAlphabet: (String) -> Unit,
+    setSharp: (Sharp) -> Unit,
+) {
+    Text(
+        modifier = Modifier.fillMaxWidth().padding(top = 40.dp, bottom = 20.dp),
+        text = uiState.alphabet + if (uiState.sharp == Sharp.SET) "#" else "",
+        textAlign = TextAlign.Center,
+        fontSize = 30.sp,
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        ChordOutlineButton(
+            alphabet = "C",
+            uiState = uiState,
+        ) { setAlphabet(it) }
+        ChordOutlineButton(
+            alphabet = "D",
+            uiState = uiState,
+        ) { setAlphabet(it) }
+        ChordOutlineButton(
+            alphabet = "E",
+            uiState = uiState,
+        ) { setAlphabet(it) }
+        ChordOutlineButton(
+            alphabet = "F",
+            uiState = uiState,
+        ) { setAlphabet(it) }
+    }
+    Row(modifier = Modifier.fillMaxWidth()) {
+        ChordOutlineButton(
+            alphabet = "G",
+            uiState = uiState,
+        ) { setAlphabet(it) }
+        ChordOutlineButton(
+            alphabet = "A",
+            uiState = uiState,
+        ) { setAlphabet(it) }
+        ChordOutlineButton(
+            alphabet = "B",
+            uiState = uiState,
+        ) { setAlphabet(it) }
+        SharpOutlineButton(
+            uiState = uiState,
+        ) {
+            setSharp(it)
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ColumnScope.TypeButtons(
+    uiState: ChordScreenViewModel.ChordScreenUiState,
+    setType: (TYPE) -> Unit,
+) {
+    Text(
+        modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 20.dp),
+        text = uiState.type?.name ?: "",
+        textAlign = TextAlign.Center,
+        fontSize = 30.sp,
+    )
+    val scrollableState = rememberScrollState()
+    FlowRow(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(state = scrollableState),
+        overflow = FlowRowOverflow.Visible,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        for (type in TYPE.entries) {
+            TypeOutlineButton(
+                type = type,
                 uiState = uiState,
-            ) { viewModel.setAlphabet(it) }
-            ChordOutlineButton(
-                alphabet = "A",
-                uiState = uiState,
-            ) { viewModel.setAlphabet(it) }
-            ChordOutlineButton(
-                alphabet = "B",
-                uiState = uiState,
-            ) { viewModel.setAlphabet(it) }
-            SharpOutlineButton(
-                uiState = uiState,
-            ) {
-                viewModel.setSharp(Sharp.UNSET)
-            }
+            ) { setType(type) }
         }
     }
 }
@@ -208,6 +278,36 @@ fun RowScope.ChordOutlineButton(
             ),
     ) {
         Text(alphabet)
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun FlowRowScope.TypeOutlineButton(
+    type: TYPE,
+    uiState: ChordScreenViewModel.ChordScreenUiState,
+    setType: (TYPE) -> Unit,
+) {
+    OutlinedButton(
+        onClick = { setType(type) },
+        modifier = Modifier.defaultMinSize(minWidth = 100.dp),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                containerColor =
+                    if (uiState.type == type) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onPrimary
+                    },
+                contentColor =
+                    if (uiState.type == type) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+            ),
+    ) {
+        Text(maxLines = 1, text = type.name)
     }
 }
 
