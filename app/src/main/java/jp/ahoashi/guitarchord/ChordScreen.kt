@@ -247,7 +247,7 @@ private fun DrawScope.DrawFinger(
         return
     }
     val x = (finger.fret - firstFlet) * (this.size.width / 4)
-    val y = finger.string.start * (this.size.height / 6f)
+    val y = (finger.string.start - 1) * (this.size.height / 6f)
     drawCircle(
         color = Color.LightGray,
         radius = 16.dp.toPx(),
