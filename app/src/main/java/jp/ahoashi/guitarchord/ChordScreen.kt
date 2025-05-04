@@ -98,6 +98,30 @@ fun ChordScreen(
                         strokeWidth = 2.dp.toPx(),
                     )
                 }
+                // 押し弦の位置を描画
+                val fingerAlign = uiState.chord?.type?.fingerAlign
+                val fingers =
+                    if (fingerAlign != null) {
+                        listOf(
+                            fingerAlign.index,
+                            fingerAlign.middle,
+                            fingerAlign.ling,
+                            fingerAlign.little,
+                        ).filter {
+                            it != Chord.FingerPosition.EMPTY
+                        }
+                    } else {
+                        emptyList()
+                    }
+
+                val max = fingers.maxOfOrNull { it.fret } ?: 0
+                val startFret =
+                    if (max <= 4) {
+                        0
+                    } else {
+                        max - 4
+                    }
+
                 // フレットの番号を描画
                 for (i in 1..4) {
                     drawLine(
@@ -106,25 +130,18 @@ fun ChordScreen(
                         end = Offset(x = offsetX * i, y = size.height),
                         strokeWidth = 2.dp.toPx(),
                     )
-                    drawText(text.measure(i.toString()), color = textColor, topLeft = Offset(offsetX * i - (offsetX / 2), -20.dp.toPx()))
+                    drawText(
+                        textLayoutResult = text.measure((startFret + i).toString()),
+                        color = textColor,
+                        topLeft = Offset(offsetX * i - (offsetX / 2), -20.dp.toPx()),
+                    )
                 }
 
-                // 押し弦の位置を描画
-                val fingerAlign = uiState.chord?.type?.fingerAlign
-                val firstFret =
-                    fingerAlign?.let {
-                        listOf(
-                            it.index,
-                            it.middle,
-                            it.ling,
-                            it.little,
-                        ).minOf { it.fret }
-                    } ?: 0
                 fingerAlign?.let {
-                    DrawFinger(textMeasurer = fingerText, name = "人", firstFlet = firstFret, finger = it.index)
-                    DrawFinger(textMeasurer = fingerText, name = "中", firstFlet = firstFret, finger = it.middle)
-                    DrawFinger(textMeasurer = fingerText, name = "薬", firstFlet = firstFret, finger = it.ling)
-                    DrawFinger(textMeasurer = fingerText, name = "小", firstFlet = firstFret, finger = it.little)
+                    DrawFinger(textMeasurer = fingerText, name = "人", firstFlet = startFret, finger = it.index)
+                    DrawFinger(textMeasurer = fingerText, name = "中", firstFlet = startFret, finger = it.middle)
+                    DrawFinger(textMeasurer = fingerText, name = "薬", firstFlet = startFret, finger = it.ling)
+                    DrawFinger(textMeasurer = fingerText, name = "小", firstFlet = startFret, finger = it.little)
                 }
             }
         }
