@@ -45,19 +45,7 @@ class ChordScreenViewModel
             alphabet: String,
             sharp: Sharp,
             type: TYPE?,
-        ): Chord? =
-            when {
-                alphabet == "C" -> {
-                    if (sharp == Sharp.SET) {
-                        ChordList.C.map.getOrDefault(type, ChordList.C.cMajor)
-                    } else {
-                        ChordList.C.map.getOrDefault(type, ChordList.C.cMajor)
-                    }
-                }
-                else -> {
-                    ChordList.C.cMajor
-                }
-            }
+        ): Chord? = ChordList.findChord(alphabet, sharp == Sharp.SET, type)
 
         data class ChordScreenUiState(
             val alphabet: String,
