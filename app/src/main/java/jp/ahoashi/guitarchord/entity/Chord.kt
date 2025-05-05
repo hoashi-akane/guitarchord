@@ -8,7 +8,7 @@ data class Chord(
     data class ChordType(
         val type: TYPE,
         val fingerAlign: Fingers,
-        val openString: Set<Int>,
+        val openString: Set<Int> = setOf(),
     )
 
     data class Fingers(
@@ -22,6 +22,8 @@ data class Chord(
         val fret: Int,
         val string: IntRange,
     ) {
+        constructor(fret: Int, string: Int) : this(fret, string..string)
+
         companion object {
             val EMPTY = FingerPosition(fret = 0, string = 0..0)
         }
