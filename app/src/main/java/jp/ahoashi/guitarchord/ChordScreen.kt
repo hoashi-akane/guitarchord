@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -58,7 +57,15 @@ fun ChordScreen(
     val text = rememberTextMeasurer(8)
     val fingerText = rememberTextMeasurer(6)
     val uiState by viewModel.uiState.collectAsState()
-    Column(modifier = modifier.fillMaxHeight().padding(horizontal = 20.dp, vertical = 100.dp)) {
+    val scrollableState = rememberScrollState()
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxHeight()
+                .verticalScroll(scrollableState)
+                .padding(start = 20.dp, end = 20.dp, top = 100.dp),
+    ) {
         Row {
             val textColor = MaterialTheme.colorScheme.onSurface
             val firstLineColor =
@@ -221,12 +228,9 @@ private fun ColumnScope.TypeButtons(
         textAlign = TextAlign.Center,
         fontSize = 30.sp,
     )
-    val scrollableState = rememberScrollState()
     FlowRow(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .verticalScroll(state = scrollableState),
+            Modifier.fillMaxWidth(),
         overflow = FlowRowOverflow.Visible,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
