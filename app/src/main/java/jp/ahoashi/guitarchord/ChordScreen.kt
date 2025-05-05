@@ -26,8 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -203,9 +205,7 @@ private fun ColumnScope.AlphabetButtons(
         ) { setAlphabet(it) }
         SharpOutlineButton(
             uiState = uiState,
-        ) {
-            setSharp(it)
-        }
+        ) { setSharp(it) }
     }
 }
 
@@ -255,6 +255,8 @@ private fun DrawScope.DrawFinger(
     val y = (finger.string.start - 1) * offsetY
     //  複数弦押しの場合は、RoundRectを利用して描画する
     val radius = 16.dp.toPx()
+    val textResult = textMeasurer.measure(name)
+
     if (finger.string.start == finger.string.last) {
         drawCircle(
             color = Color.LightGray,
@@ -265,14 +267,13 @@ private fun DrawScope.DrawFinger(
                     y = y.toFloat(),
                 ),
         )
-
         drawText(
-            textLayoutResult = textMeasurer.measure(name),
+            textLayoutResult = textResult,
             color = Color.Black,
             topLeft =
                 Offset(
-                    x = x.toFloat() - (textMeasurer.measure(name).size.width / 2),
-                    y = y.toFloat() - (textMeasurer.measure(name).size.height / 2),
+                    x = x.toFloat() - textResult.size.width / 2,
+                    y = y.toFloat() - textResult.size.height / 2,
                 ),
         )
     } else {
@@ -286,12 +287,12 @@ private fun DrawScope.DrawFinger(
         )
 
         drawText(
-            textLayoutResult = textMeasurer.measure(name),
+            textLayoutResult = textResult,
             color = Color.Black,
             topLeft =
                 Offset(
-                    x = x.toFloat() - (textMeasurer.measure(name).size.width / 2),
-                    y = (endY - y) / 2 - (textMeasurer.measure(name).size.height / 2),
+                    x = x.toFloat() - textResult.size.width / 2,
+                    y = (y + endY) / 2 - textResult.size.height / 2,
                 ),
         )
     }
@@ -361,9 +362,11 @@ fun RowScope.SharpOutlineButton(
     uiState: ChordScreenViewModel.ChordScreenUiState,
     setSharp: (Sharp) -> Unit,
 ) {
+    // #未対応の為、レイアウト維持しつつボタンを非表示にしています
     OutlinedButton(
         onClick = { setSharp(Sharp.SET) },
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.weight(1f).alpha(0f),
+        enabled = false,
         colors =
             ButtonDefaults.outlinedButtonColors(
                 containerColor =
