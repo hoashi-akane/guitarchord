@@ -27,7 +27,7 @@ object C {
                             ling = FingerPosition(fret = 3, string = 5..5),
                             little = FingerPosition.EMPTY, // 使用しない
                         ),
-                    openString = setOf(3, 6), // 開放弦
+                    openString = setOf(1, 3), // 開放弦
                 ),
         )
     private val cMinor =
@@ -152,7 +152,7 @@ object C {
                             ling = FingerPosition.EMPTY,
                             little = FingerPosition(fret = 6, string = 2..2),
                         ),
-                    openString = setOf(3), // 開放弦
+                    openString = setOf(), // 開放弦
                 ),
         )
 
@@ -188,7 +188,7 @@ object C {
                             ling = FingerPosition(fret = 3, string = 2..2),
                             little = FingerPosition(fret = 3, string = 1..1),
                         ),
-                    openString = setOf(1, 3), // 開放弦
+                    openString = setOf(3), // 開放弦
                 ),
         )
 

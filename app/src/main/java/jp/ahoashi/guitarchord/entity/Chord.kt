@@ -28,6 +28,7 @@ data class Chord(
     }
 }
 
+// TODO: 未利用部分のコード追加
 enum class TYPE {
     MAJOR,
     MINOR,
@@ -39,10 +40,10 @@ enum class TYPE {
     SEVEN_SUS4,
     ADD9,
     MADD9,
-    SIX,
-    MINOR6,
-    AUG,
-    DIM,
-    DIM7,
-    MINOR7B5,
+//    SIX,
+//    MINOR6,
+//    AUG,
+//    DIM,
+//    DIM7,
+//    MINOR7B5,
 }

@@ -15,6 +15,14 @@ object ChordList {
                     C.map[type]
                 }
             }
+            "D" -> {
+                if (sharp) {
+                    // TODO: D# GET
+                    D.map[type]
+                } else {
+                    D.map[type]
+                }
+            }
             else -> {
                 null
             }
