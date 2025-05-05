@@ -18,25 +18,31 @@ class ChordScreenViewModel
     @Inject
     constructor() : ViewModel() {
         val uiState: MutableStateFlow<ChordScreenUiState> = MutableStateFlow(ChordScreenUiState.Empty)
-        val sharpError: MutableSharedFlow<Boolean> = MutableSharedFlow()
+        val sharpError: MutableSharedFlow<Unit> = MutableSharedFlow()
 
         fun setAlphabet(alphabet: String) {
+            val chord = findChord(alphabet, uiState.value.sharp, uiState.value.type)
+            chord ?: sharpError.tryEmit(Unit)
+
             uiState.update {
-                val chord = findChord(alphabet, it.sharp, it.type)
                 it.copy(alphabet = alphabet, type = it.type, chord = chord)
             }
         }
 
         fun setSharp(sharp: Sharp) {
+            val chord = findChord(uiState.value.alphabet, sharp, uiState.value.type)
+            chord ?: sharpError.tryEmit(Unit)
+
             uiState.update {
-                val chord = findChord(it.alphabet, sharp, it.type)
                 it.copy(sharp = sharp, chord = chord)
             }
         }
 
         fun setType(type: TYPE?) {
+            val chord = findChord(uiState.value.alphabet, uiState.value.sharp, type)
+            chord ?: sharpError.tryEmit(Unit)
+
             uiState.update {
-                val chord = findChord(it.alphabet, it.sharp, type)
                 it.copy(type = type, chord = chord)
             }
         }
