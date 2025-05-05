@@ -64,7 +64,7 @@ fun ChordScreen(
                     Color.Black
                 }
             Canvas(modifier = Modifier.fillMaxWidth().padding(start = 10.dp).height(200.dp)) {
-                val offsetY = size.height / 6f
+                val offsetY = size.height / 5f
                 val offsetX = size.width / 4f
                 // 開放弦の記号を表示 TODO: 位置調整が課題だが、○を描画するだけであればCanvasで描画しない方が楽
                 val openStrings = uiState.chord?.type?.openString ?: emptySet()
@@ -86,11 +86,11 @@ fun ChordScreen(
                 drawLine(
                     color = firstLineColor,
                     start = Offset(0f, 0f),
-                    end = Offset(0f, 200.dp.toPx()),
+                    end = Offset(0f, size.height),
                     strokeWidth = 2.dp.toPx(),
                 )
                 // 基準の線を描画
-                for (i in 0..6) {
+                for (i in 0..5) {
                     drawLine(
                         color = Color.LightGray,
                         start = Offset(0f, offsetY * i),
@@ -138,10 +138,10 @@ fun ChordScreen(
                 }
 
                 fingerAlign?.let {
-                    DrawFinger(textMeasurer = fingerText, name = "人", firstFlet = startFret, finger = it.index)
-                    DrawFinger(textMeasurer = fingerText, name = "中", firstFlet = startFret, finger = it.middle)
-                    DrawFinger(textMeasurer = fingerText, name = "薬", firstFlet = startFret, finger = it.ling)
-                    DrawFinger(textMeasurer = fingerText, name = "小", firstFlet = startFret, finger = it.little)
+                    DrawFinger(textMeasurer = fingerText, name = "人", firstFlet = startFret, finger = it.index, offsetX, offsetY)
+                    DrawFinger(textMeasurer = fingerText, name = "中", firstFlet = startFret, finger = it.middle, offsetX, offsetY)
+                    DrawFinger(textMeasurer = fingerText, name = "薬", firstFlet = startFret, finger = it.ling, offsetX, offsetY)
+                    DrawFinger(textMeasurer = fingerText, name = "小", firstFlet = startFret, finger = it.little, offsetX, offsetY)
                 }
             }
         }
@@ -241,13 +241,15 @@ private fun DrawScope.DrawFinger(
     name: String,
     firstFlet: Int,
     finger: Chord.FingerPosition,
+    offsetX: Float,
+    offsetY: Float,
 ) {
     if (finger.fret == 0) {
         // フレットが0の場合は開放弦なので表示しない
         return
     }
-    val x = (finger.fret - firstFlet) * (this.size.width / 4)
-    val y = (finger.string.start - 1) * (this.size.height / 6f)
+    val x = (finger.fret - firstFlet) * offsetX
+    val y = (finger.string.start - 1) * offsetY
     drawCircle(
         color = Color.LightGray,
         radius = 16.dp.toPx(),
