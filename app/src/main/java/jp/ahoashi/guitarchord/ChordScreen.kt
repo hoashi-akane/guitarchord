@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -131,10 +132,11 @@ fun ChordScreen(
                         end = Offset(x = offsetX * i, y = size.height),
                         strokeWidth = 2.dp.toPx(),
                     )
+                    val textResult = text.measure((startFret + i).toString())
                     drawText(
-                        textLayoutResult = text.measure((startFret + i).toString()),
+                        textLayoutResult = textResult,
                         color = textColor,
-                        topLeft = Offset(offsetX * i - (offsetX / 2), -20.dp.toPx()),
+                        topLeft = Offset(offsetX * i - offsetX / 2 - textResult.size.width / 2, -36.dp.toPx()),
                     )
                 }
 
@@ -249,7 +251,7 @@ private fun DrawScope.DrawFinger(
         // フレットが0の場合は開放弦なので表示しない
         return
     }
-    val x = (finger.fret - firstFlet) * offsetX
+    val x = (finger.fret - firstFlet) * offsetX - (offsetX / 2)
     val y = (finger.string.start - 1) * offsetY
     //  複数弦押しの場合は、RoundRectを利用して描画する
     val radius = 16.dp.toPx()
@@ -280,9 +282,7 @@ private fun DrawScope.DrawFinger(
             color = Color.LightGray,
             topLeft = Offset(x - radius, y - radius),
             size = Size(circleSize, endY + circleSize - y),
-            cornerRadius =
-                androidx.compose.ui.geometry
-                    .CornerRadius(radius, radius),
+            cornerRadius = CornerRadius(radius, radius),
         )
 
         drawText(
