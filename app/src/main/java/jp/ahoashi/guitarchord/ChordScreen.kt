@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
@@ -250,25 +251,50 @@ private fun DrawScope.DrawFinger(
     }
     val x = (finger.fret - firstFlet) * offsetX
     val y = (finger.string.start - 1) * offsetY
-    drawCircle(
-        color = Color.LightGray,
-        radius = 16.dp.toPx(),
-        center =
-            Offset(
-                x = x.toFloat(),
-                y = y.toFloat(),
-            ),
-    )
+    //  複数弦押しの場合は、RoundRectを利用して描画する
+    val radius = 16.dp.toPx()
+    if (finger.string.start == finger.string.last) {
+        drawCircle(
+            color = Color.LightGray,
+            radius = radius,
+            center =
+                Offset(
+                    x = x.toFloat(),
+                    y = y.toFloat(),
+                ),
+        )
 
-    drawText(
-        textLayoutResult = textMeasurer.measure(name),
-        color = Color.Black,
-        topLeft =
-            Offset(
-                x = x.toFloat() - (textMeasurer.measure(name).size.width / 2),
-                y = y.toFloat() - (textMeasurer.measure(name).size.height / 2),
-            ),
-    )
+        drawText(
+            textLayoutResult = textMeasurer.measure(name),
+            color = Color.Black,
+            topLeft =
+                Offset(
+                    x = x.toFloat() - (textMeasurer.measure(name).size.width / 2),
+                    y = y.toFloat() - (textMeasurer.measure(name).size.height / 2),
+                ),
+        )
+    } else {
+        val endY = (finger.string.last - 1) * offsetY
+        val circleSize = radius * 2
+        drawRoundRect(
+            color = Color.LightGray,
+            topLeft = Offset(x - radius, y - radius),
+            size = Size(circleSize, endY + circleSize - y),
+            cornerRadius =
+                androidx.compose.ui.geometry
+                    .CornerRadius(radius, radius),
+        )
+
+        drawText(
+            textLayoutResult = textMeasurer.measure(name),
+            color = Color.Black,
+            topLeft =
+                Offset(
+                    x = x.toFloat() - (textMeasurer.measure(name).size.width / 2),
+                    y = (endY - y) / 2 - (textMeasurer.measure(name).size.height / 2),
+                ),
+        )
+    }
 }
 
 @Composable
