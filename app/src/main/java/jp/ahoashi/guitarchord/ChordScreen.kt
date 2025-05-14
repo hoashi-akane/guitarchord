@@ -1,7 +1,6 @@
 package jp.ahoashi.guitarchord
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -34,6 +33,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -92,6 +93,9 @@ fun ChordScreen(
     ) {
         Row {
             val textColor = MaterialTheme.colorScheme.onSurface
+            val primaryColor = MaterialTheme.colorScheme.primary
+            val outline = MaterialTheme.colorScheme.outlineVariant
+            val background = MaterialTheme.colorScheme.background
             val firstLineColor =
                 if (startFret == 0) {
                     primaryColor
@@ -148,13 +152,16 @@ fun ChordScreen(
                         topLeft = Offset(offsetX * i - offsetX / 2 - textResult.size.width / 2, -36.dp.toPx()),
                     )
                 }
-
-                fingerAlign?.let {
-                    DrawFinger(textMeasurer = fingerText, name = "人", firstFlet = startFret, finger = it.index, offsetX, offsetY)
-                    DrawFinger(textMeasurer = fingerText, name = "中", firstFlet = startFret, finger = it.middle, offsetX, offsetY)
-                    DrawFinger(textMeasurer = fingerText, name = "薬", firstFlet = startFret, finger = it.ling, offsetX, offsetY)
-                    DrawFinger(textMeasurer = fingerText, name = "小", firstFlet = startFret, finger = it.little, offsetX, offsetY)
-                }
+                // 指の位置を描画
+                DrawFingers(
+                    textMeasurer = fingerText,
+                    firstFlet = startFret,
+                    fingers = fingers,
+                    offsetX = offsetX,
+                    offsetY = offsetY,
+                    primary = primaryColor,
+                    background = background,
+                )
             }
         }
         AlphabetButtons(uiState, { viewModel.setAlphabet(it) }) {
@@ -243,62 +250,90 @@ private fun ColumnScope.TypeButtons(
     }
 }
 
-private fun DrawScope.DrawFinger(
+private fun DrawScope.DrawFingers(
     textMeasurer: TextMeasurer,
-    name: String,
     firstFlet: Int,
-    finger: Chord.FingerPosition,
+    fingers: List<Chord.FingerPosition>,
     offsetX: Float,
     offsetY: Float,
+    primary: Color,
+    background: Color,
 ) {
-    if (finger.fret == 0) {
-        // フレットが0の場合は開放弦なので表示しない
-        return
-    }
-    val x = (finger.fret - firstFlet) * offsetX - (offsetX / 2)
-    val y = (finger.string.start - 1) * offsetY
-    //  複数弦押しの場合は、RoundRectを利用して描画する
-    val radius = 16.dp.toPx()
-    val textResult = textMeasurer.measure(name)
+    // TODO: 文字列と数字で設定Repositoryから変えられる様にする
+    val fingerList = listOf("人", "中", "薬", "小")
+    fingers.forEachIndexed { index, finger ->
+        if (finger.fret == 0) {
+            // フレットが0の場合は開放弦なので表示しない
+            return
+        }
+        val x = (finger.fret - firstFlet) * offsetX - (offsetX / 2)
+        val y = (finger.string.start - 1) * offsetY
+        //  複数弦押しの場合は、RoundRectを利用して描画する
+        val radius = 16.dp.toPx()
+        val textResult = textMeasurer.measure(fingerList[index])
 
-    if (finger.string.start == finger.string.last) {
-        drawCircle(
-            color = Color.LightGray,
-            radius = radius,
-            center =
-                Offset(
-                    x = x.toFloat(),
-                    y = y.toFloat(),
-                ),
-        )
-        drawText(
-            textLayoutResult = textResult,
-            color = Color.Black,
-            topLeft =
-                Offset(
-                    x = x.toFloat() - textResult.size.width / 2,
-                    y = y.toFloat() - textResult.size.height / 2,
-                ),
-        )
-    } else {
-        val endY = (finger.string.last - 1) * offsetY
-        val circleSize = radius * 2
-        drawRoundRect(
-            color = Color.LightGray,
-            topLeft = Offset(x - radius, y - radius),
-            size = Size(circleSize, endY + circleSize - y),
-            cornerRadius = CornerRadius(radius, radius),
-        )
+        // TODO: もうRoundRectで両方作る形で良いかも
+        if (finger.string.start == finger.string.last) {
+            // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
+            drawCircle(
+                color = background,
+                radius = radius,
+                style = Fill,
+                center =
+                    Offset(
+                        x = x.toFloat(),
+                        y = y.toFloat(),
+                    ),
+            )
+            drawCircle(
+                color = primary,
+                radius = radius,
+                style = Stroke(width = 2.dp.toPx()),
+                center =
+                    Offset(
+                        x = x.toFloat(),
+                        y = y.toFloat(),
+                    ),
+            )
+            drawText(
+                textLayoutResult = textResult,
+                color = primary,
+                topLeft =
+                    Offset(
+                        x = x.toFloat() - textResult.size.width / 2,
+                        y = y.toFloat() - textResult.size.height / 2,
+                    ),
+            )
+        } else {
+            // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
+            val endY = (finger.string.last - 1) * offsetY
+            val circleSize = radius * 2
+            drawRoundRect(
+                color = background,
+                style = Fill,
+                topLeft = Offset(x - radius, y - radius),
+                size = Size(circleSize, endY + circleSize - y),
+                cornerRadius = CornerRadius(radius, radius),
+            )
 
-        drawText(
-            textLayoutResult = textResult,
-            color = Color.Black,
-            topLeft =
-                Offset(
-                    x = x.toFloat() - textResult.size.width / 2,
-                    y = (y + endY) / 2 - textResult.size.height / 2,
-                ),
-        )
+            drawRoundRect(
+                color = primary,
+                style = Stroke(width = 2.dp.toPx()),
+                topLeft = Offset(x - radius, y - radius),
+                size = Size(circleSize, endY + circleSize - y),
+                cornerRadius = CornerRadius(radius, radius),
+            )
+
+            drawText(
+                textLayoutResult = textResult,
+                color = primary,
+                topLeft =
+                    Offset(
+                        x = x.toFloat() - textResult.size.width / 2,
+                        y = (y + endY) / 2 - textResult.size.height / 2,
+                    ),
+            )
+        }
     }
 }
 
