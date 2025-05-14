@@ -108,16 +108,14 @@ fun ChordScreen(
                 // 開放弦の記号を表示 TODO: 位置調整が課題だが、○を描画するだけであればCanvasで描画しない方が楽
                 val openStrings = uiState.chord?.type?.openString ?: emptySet()
                 openStrings.forEach {
-                    val textResult = text.measure("○")
-                    // 弦は1始まりなので-1。テキストと線を中心に合わせるため文字分の高さを割って引く
-                    val y = (offsetY * (it - 1)).toFloat() - (textResult.size.height / 2)
-                    drawText(
-                        textResult,
-                        color = textColor,
-                        topLeft =
+                    drawCircle(
+                        color = primaryColor,
+                        radius = 8.dp.toPx(),
+                        style = Stroke(width = 2.dp.toPx()),
+                        center =
                             Offset(
-                                x = -(6.dp.toPx() + textResult.size.width),
-                                y = y,
+                                x = -8.dp.toPx() + -4.dp.toPx(),
+                                y = offsetY * (it - 1).toFloat(),
                             ),
                     )
                 }
@@ -131,7 +129,7 @@ fun ChordScreen(
                 // 基準の線を描画
                 for (i in 0..5) {
                     drawLine(
-                        color = Color.LightGray,
+                        color = outline,
                         start = Offset(0f, offsetY * i),
                         end = Offset(x = size.width, offsetY * i),
                         strokeWidth = 2.dp.toPx(),
@@ -140,7 +138,7 @@ fun ChordScreen(
                 // フレットの縦線と番号を描画
                 for (i in 1..4) {
                     drawLine(
-                        color = Color.LightGray,
+                        color = outline,
                         start = Offset(x = offsetX * i, y = 0f),
                         end = Offset(x = offsetX * i, y = size.height),
                         strokeWidth = 2.dp.toPx(),
