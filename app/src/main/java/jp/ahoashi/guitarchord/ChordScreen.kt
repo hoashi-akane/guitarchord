@@ -59,6 +59,30 @@ fun ChordScreen(
     val uiState by viewModel.uiState.collectAsState()
     val scrollableState = rememberScrollState()
 
+    val fingerAlign = uiState.chord?.type?.fingerAlign
+    val fingers =
+        if (fingerAlign != null) {
+            listOf(
+                fingerAlign.index,
+                fingerAlign.middle,
+                fingerAlign.ling,
+                fingerAlign.little,
+            )
+        } else {
+            emptyList()
+        }
+
+    val max =
+        fingers
+            .filter { it != Chord.FingerPosition.EMPTY }
+            .maxOfOrNull { it.fret } ?: 0
+    val startFret =
+        if (max <= 4) {
+            0
+        } else {
+            max - 4
+        }
+
     Column(
         modifier =
             modifier
@@ -69,10 +93,10 @@ fun ChordScreen(
         Row {
             val textColor = MaterialTheme.colorScheme.onSurface
             val firstLineColor =
-                if (isSystemInDarkTheme()) {
-                    Color.LightGray
+                if (startFret == 0) {
+                    primaryColor
                 } else {
-                    Color.Black
+                    outline
                 }
             Canvas(modifier = Modifier.fillMaxWidth().padding(start = 10.dp).height(200.dp)) {
                 val offsetY = size.height / 5f
@@ -93,7 +117,7 @@ fun ChordScreen(
                             ),
                     )
                 }
-                // 開始の太線 FIXME :開始位置2フレット目以降の場合は非表示
+                // 開始の太線
                 drawLine(
                     color = firstLineColor,
                     start = Offset(0f, 0f),
@@ -109,31 +133,7 @@ fun ChordScreen(
                         strokeWidth = 2.dp.toPx(),
                     )
                 }
-                // 押し弦の位置を描画
-                val fingerAlign = uiState.chord?.type?.fingerAlign
-                val fingers =
-                    if (fingerAlign != null) {
-                        listOf(
-                            fingerAlign.index,
-                            fingerAlign.middle,
-                            fingerAlign.ling,
-                            fingerAlign.little,
-                        ).filter {
-                            it != Chord.FingerPosition.EMPTY
-                        }
-                    } else {
-                        emptyList()
-                    }
-
-                val max = fingers.maxOfOrNull { it.fret } ?: 0
-                val startFret =
-                    if (max <= 4) {
-                        0
-                    } else {
-                        max - 4
-                    }
-
-                // フレットの番号を描画
+                // フレットの縦線と番号を描画
                 for (i in 1..4) {
                     drawLine(
                         color = Color.LightGray,
