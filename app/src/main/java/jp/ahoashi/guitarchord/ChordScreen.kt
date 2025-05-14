@@ -229,7 +229,7 @@ private fun ColumnScope.TypeButtons(
 ) {
     Text(
         modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 20.dp),
-        text = uiState.type?.name ?: "",
+        text = uiState.type?.displayName ?: "",
         textAlign = TextAlign.Center,
         fontSize = 30.sp,
     )
@@ -262,7 +262,7 @@ private fun DrawScope.DrawFingers(
     fingers.forEachIndexed { index, finger ->
         if (finger.fret == 0) {
             // フレットが0の場合は開放弦なので表示しない
-            return
+            return@forEachIndexed
         }
         val x = (finger.fret - firstFlet) * offsetX - (offsetX / 2)
         val y = (finger.string.start - 1) * offsetY
@@ -373,7 +373,7 @@ fun FlowRowScope.TypeOutlineButton(
 ) {
     OutlinedButton(
         onClick = { setType(type) },
-        modifier = Modifier.defaultMinSize(minWidth = 100.dp),
+        modifier = Modifier.defaultMinSize(minWidth = 80.dp),
         colors =
             ButtonDefaults.outlinedButtonColors(
                 containerColor =
@@ -390,7 +390,7 @@ fun FlowRowScope.TypeOutlineButton(
                     },
             ),
     ) {
-        Text(maxLines = 1, text = type.name)
+        Text(maxLines = 1, text = type.displayName)
     }
 }
 

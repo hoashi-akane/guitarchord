@@ -31,17 +31,19 @@ data class Chord(
 }
 
 // TODO: 未利用部分のコード追加
-enum class TYPE {
-    MAJOR,
-    MINOR,
-    M7,
-    SEVENTH,
-    MINOR7,
-    MM7,
-    SUS4,
-    SEVEN_SUS4,
-    ADD9,
-    MADD9,
+enum class TYPE(
+    val displayName: String,
+) {
+    MAJOR("M"),
+    MINOR("m"),
+    M7("maj7"),
+    SEVENTH("7"),
+    MINOR7("m7"),
+    MM7("mM7"),
+    SUS4("sus4"),
+    SEVEN_SUS4("7sus4"),
+    ADD9("add9"),
+    MADD9("madd9"),
 //    SIX,
 //    MINOR6,
 //    AUG,
