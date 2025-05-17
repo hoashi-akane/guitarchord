@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -84,12 +85,20 @@ fun ChordScreen(
             max - 4
         }
 
+    val fingerNameList =
+        listOf(
+            stringResource(R.string.index_finger),
+            stringResource(R.string.middle_finger),
+            stringResource(R.string.ring_finger),
+            stringResource(R.string.little_finger),
+        )
+
     Column(
         modifier =
             modifier
                 .fillMaxHeight()
                 .verticalScroll(scrollableState)
-                .padding(start = 20.dp, end = 20.dp, top = 100.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 60.dp),
     ) {
         Row {
             val textColor = MaterialTheme.colorScheme.onSurface
@@ -147,7 +156,7 @@ fun ChordScreen(
                     drawText(
                         textLayoutResult = textResult,
                         color = textColor,
-                        topLeft = Offset(offsetX * i - offsetX / 2 - textResult.size.width / 2, -36.dp.toPx()),
+                        topLeft = Offset(offsetX * i - offsetX / 2 - textResult.size.width / 2, -40.dp.toPx()),
                     )
                 }
                 // 指の位置を描画
@@ -155,6 +164,7 @@ fun ChordScreen(
                     textMeasurer = fingerText,
                     firstFlet = startFret,
                     fingers = fingers,
+                    fingerNameList = fingerNameList,
                     offsetX = offsetX,
                     offsetY = offsetY,
                     primary = primaryColor,
@@ -252,13 +262,12 @@ private fun DrawScope.DrawFingers(
     textMeasurer: TextMeasurer,
     firstFlet: Int,
     fingers: List<Chord.FingerPosition>,
+    fingerNameList: List<String>,
     offsetX: Float,
     offsetY: Float,
     primary: Color,
     background: Color,
 ) {
-    // TODO: 文字列と数字で設定Repositoryから変えられる様にする
-    val fingerList = listOf("人", "中", "薬", "小")
     fingers.forEachIndexed { index, finger ->
         if (finger.fret == 0) {
             // フレットが0の場合は開放弦なので表示しない
@@ -268,7 +277,7 @@ private fun DrawScope.DrawFingers(
         val y = (finger.string.start - 1) * offsetY
         //  複数弦押しの場合は、RoundRectを利用して描画する
         val radius = 16.dp.toPx()
-        val textResult = textMeasurer.measure(fingerList[index])
+        val textResult = textMeasurer.measure(fingerNameList[index])
 
         // TODO: もうRoundRectで両方作る形で良いかも
         if (finger.string.start == finger.string.last) {

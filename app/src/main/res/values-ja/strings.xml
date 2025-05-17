@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name = "index_finger">人</string>
+    <string name = "middle_finger">中</string>
+    <string name = "ring_finger">薬</string>
+    <string name = "little_finger">小</string>
+</resources>

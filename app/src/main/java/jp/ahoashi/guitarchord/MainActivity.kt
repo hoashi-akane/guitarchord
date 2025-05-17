@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
+import jp.ahoashi.guitarchord.topbar.ChordScreenTopAppBar
 import jp.ahoashi.guitarchord.ui.theme.GuitarchordTheme
 
 @AndroidEntryPoint
@@ -18,7 +19,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GuitarchordTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = { ChordScreenTopAppBar() },
+                ) { innerPadding ->
                     ChordScreen(
                         modifier = Modifier.padding(innerPadding),
                     )

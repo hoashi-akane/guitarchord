@@ -13,6 +13,8 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        androidResources.localeFilters.addAll(listOf("ja"))
+
         applicationId = "jp.ahoashi.guitarchord"
         minSdk = 26
         targetSdk = 35
