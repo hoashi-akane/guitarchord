@@ -18,8 +18,8 @@ android {
         applicationId = "jp.ahoashi.guitarchord"
         minSdk = 26
         targetSdk = 35
-        versionCode = 800
-        versionName = "0.8.0"
+        versionCode = 901
+        versionName = "0.9.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -50,6 +50,7 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.datastore)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.compose.viewmodel)
     implementation(libs.androidx.activity.compose)

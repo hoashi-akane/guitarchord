@@ -2,6 +2,7 @@ package jp.ahoashi.guitarchord
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import jp.ahoashi.guitarchord.core.SettingsRepository
 import jp.ahoashi.guitarchord.entity.Chord
 import jp.ahoashi.guitarchord.entity.ChordList
 import jp.ahoashi.guitarchord.entity.TYPE
@@ -16,9 +17,13 @@ import javax.inject.Inject
 @HiltViewModel
 class ChordScreenViewModel
     @Inject
-    constructor() : ViewModel() {
+    constructor(
+        val settingsRepository: SettingsRepository,
+    ) : ViewModel() {
         val uiState: MutableStateFlow<ChordScreenUiState> = MutableStateFlow(ChordScreenUiState.Empty)
         val sharpError: MutableSharedFlow<Unit> = MutableSharedFlow()
+
+        fun getSettingStream() = settingsRepository.getSettingStream()
 
         fun setAlphabet(alphabet: String) {
             val chord = findChord(alphabet, uiState.value.sharp, uiState.value.type)

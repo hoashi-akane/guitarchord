@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.ahoashi.guitarchord.ChordScreenViewModel.Companion.Sharp
+import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 import jp.ahoashi.guitarchord.entity.Chord
 import jp.ahoashi.guitarchord.entity.TYPE
 
@@ -60,6 +62,8 @@ fun ChordScreen(
     val fingerText = rememberTextMeasurer(6)
     val uiState by viewModel.uiState.collectAsState()
     val scrollableState = rememberScrollState()
+
+    val setting by viewModel.getSettingStream().collectAsState(Setting())
 
     val fingerAlign = uiState.chord?.type?.fingerAlign
     val fingers =
@@ -111,65 +115,84 @@ fun ChordScreen(
                 } else {
                     outline
                 }
-            Canvas(modifier = Modifier.fillMaxWidth().padding(start = 10.dp).height(200.dp)) {
+            Canvas(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp)
+                        .height(200.dp),
+            ) {
                 val offsetY = size.height / 5f
                 val offsetX = size.width / 4f
                 // 開放弦の記号を表示 TODO: 位置調整が課題だが、○を描画するだけであればCanvasで描画しない方が楽
                 val openStrings = uiState.chord?.type?.openString ?: emptySet()
-                openStrings.forEach {
-                    drawCircle(
-                        color = primaryColor,
-                        radius = 8.dp.toPx(),
-                        style = Stroke(width = 2.dp.toPx()),
-                        center =
-                            Offset(
-                                x = -8.dp.toPx() + -4.dp.toPx(),
-                                y = offsetY * (it - 1).toFloat(),
-                            ),
-                    )
-                }
-                // 開始の太線
-                drawLine(
-                    color = firstLineColor,
-                    start = Offset(0f, 0f),
-                    end = Offset(0f, size.height),
-                    strokeWidth = 2.dp.toPx(),
-                )
-                // 基準の線を描画
-                for (i in 0..5) {
+                scale(scaleX = if (setting.lefty) -1f else 1f, scaleY = 1f) {
+                    openStrings.forEach {
+                        drawCircle(
+                            color = primaryColor,
+                            radius = 8.dp.toPx(),
+                            style = Stroke(width = 2.dp.toPx()),
+                            center =
+                                Offset(
+                                    x = -8.dp.toPx() + -4.dp.toPx(),
+                                    y = offsetY * (it - 1).toFloat(),
+                                ),
+                        )
+                    }
+
+                    // 開始の太線
                     drawLine(
-                        color = outline,
-                        start = Offset(0f, offsetY * i),
-                        end = Offset(x = size.width, offsetY * i),
+                        color = firstLineColor,
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, size.height),
                         strokeWidth = 2.dp.toPx(),
                     )
-                }
-                // フレットの縦線と番号を描画
-                for (i in 1..4) {
-                    drawLine(
-                        color = outline,
-                        start = Offset(x = offsetX * i, y = 0f),
-                        end = Offset(x = offsetX * i, y = size.height),
-                        strokeWidth = 2.dp.toPx(),
+                    // 基準の線を描画
+                    for (i in 0..5) {
+                        drawLine(
+                            color = outline,
+                            start = Offset(0f, offsetY * i),
+                            end = Offset(x = size.width, offsetY * i),
+                            strokeWidth = 2.dp.toPx(),
+                        )
+                    }
+
+                    // フレットの縦線と番号を描画
+                    for (i in 1..4) {
+                        drawLine(
+                            color = outline,
+                            start = Offset(x = offsetX * i, y = 0f),
+                            end = Offset(x = offsetX * i, y = size.height),
+                            strokeWidth = 2.dp.toPx(),
+                        )
+
+                        val offset = Offset(x = offsetX * i - offsetX / 2, y = -40.dp.toPx())
+                        scale(
+                            scaleX = if (setting.lefty) -1f else 1f,
+                            scaleY = 1f,
+                            pivot = offset,
+                        ) {
+                            val textResult = text.measure((startFret + i).toString())
+                            drawText(
+                                textLayoutResult = textResult,
+                                color = textColor,
+                                topLeft = Offset(offsetX * i - offsetX / 2 - textResult.size.width / 2, -40.dp.toPx()),
+                            )
+                        }
+                    }
+
+                    // 指の位置を描画
+                    DrawFingers(
+                        textMeasurer = fingerText,
+                        firstFlet = startFret,
+                        fingers = fingers,
+                        fingerNameList = fingerNameList,
+                        offsetX = offsetX,
+                        offsetY = offsetY,
+                        primary = primaryColor,
+                        background = background,
                     )
-                    val textResult = text.measure((startFret + i).toString())
-                    drawText(
-                        textLayoutResult = textResult,
-                        color = textColor,
-                        topLeft = Offset(offsetX * i - offsetX / 2 - textResult.size.width / 2, -40.dp.toPx()),
-                    )
                 }
-                // 指の位置を描画
-                DrawFingers(
-                    textMeasurer = fingerText,
-                    firstFlet = startFret,
-                    fingers = fingers,
-                    fingerNameList = fingerNameList,
-                    offsetX = offsetX,
-                    offsetY = offsetY,
-                    primary = primaryColor,
-                    background = background,
-                )
             }
         }
         AlphabetButtons(uiState, { viewModel.setAlphabet(it) }) {
@@ -186,7 +209,10 @@ private fun ColumnScope.AlphabetButtons(
     setSharp: (Sharp) -> Unit,
 ) {
     Text(
-        modifier = Modifier.fillMaxWidth().padding(top = 40.dp, bottom = 20.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp, bottom = 20.dp),
         text = uiState.alphabet + if (uiState.sharp == Sharp.SET) "#" else "",
         textAlign = TextAlign.Center,
         fontSize = 30.sp,
@@ -238,7 +264,10 @@ private fun ColumnScope.TypeButtons(
     setType: (TYPE) -> Unit,
 ) {
     Text(
-        modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 20.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp, bottom = 20.dp),
         text = uiState.type?.displayName ?: "",
         textAlign = TextAlign.Center,
         fontSize = 30.sp,
@@ -302,15 +331,25 @@ private fun DrawScope.DrawFingers(
                         y = y.toFloat(),
                     ),
             )
-            drawText(
-                textLayoutResult = textResult,
-                color = primary,
-                topLeft =
-                    Offset(
-                        x = x.toFloat() - textResult.size.width / 2,
-                        y = y.toFloat() - textResult.size.height / 2,
-                    ),
-            )
+
+            val textCenter =
+                Offset(
+                    x = x.toFloat(),
+                    y = y.toFloat(),
+                )
+
+            // 文字の中心から左右反転して、文字だけ正しい位置に調整
+            scale(scaleX = -1f, scaleY = 1f, pivot = textCenter) {
+                drawText(
+                    textLayoutResult = textResult,
+                    color = primary,
+                    topLeft =
+                        Offset(
+                            x = textCenter.x - textResult.size.width / 2.toFloat(),
+                            y = textCenter.y - textResult.size.height / 2.toFloat(),
+                        ),
+                )
+            }
         } else {
             // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
             val endY = (finger.string.last - 1) * offsetY
@@ -331,15 +370,23 @@ private fun DrawScope.DrawFingers(
                 cornerRadius = CornerRadius(radius, radius),
             )
 
-            drawText(
-                textLayoutResult = textResult,
-                color = primary,
-                topLeft =
-                    Offset(
-                        x = x.toFloat() - textResult.size.width / 2,
-                        y = (y + endY) / 2 - textResult.size.height / 2,
-                    ),
-            )
+            val textCenter =
+                Offset(
+                    x = x.toFloat(),
+                    y = y.toFloat(),
+                )
+            // 文字の中心から左右反転して、文字だけ正しい位置に調整
+            scale(scaleX = -1f, scaleY = 1f, pivot = textCenter) {
+                drawText(
+                    textLayoutResult = textResult,
+                    color = primary,
+                    topLeft =
+                        Offset(
+                            x = x.toFloat() - textResult.size.width / 2,
+                            y = (y + endY) / 2 - textResult.size.height / 2,
+                        ),
+                )
+            }
         }
     }
 }
@@ -411,7 +458,10 @@ fun RowScope.SharpOutlineButton(
     // #未対応の為、レイアウト維持しつつボタンを非表示にしています
     OutlinedButton(
         onClick = { setSharp(Sharp.SET) },
-        modifier = Modifier.weight(1f).alpha(0f),
+        modifier =
+            Modifier
+                .weight(1f)
+                .alpha(0f),
         enabled = false,
         colors =
             ButtonDefaults.outlinedButtonColors(
