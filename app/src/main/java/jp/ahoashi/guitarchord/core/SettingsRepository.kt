@@ -3,7 +3,7 @@ package jp.ahoashi.guitarchord.core
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
-    suspend fun setLefty(lefty: Boolean)
+    suspend fun setLefty(lefty: Boolean): Unit
 
     fun getSettingStream(): Flow<Setting>
 

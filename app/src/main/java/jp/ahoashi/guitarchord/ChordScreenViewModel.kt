@@ -1,6 +1,7 @@
 package jp.ahoashi.guitarchord
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.ahoashi.guitarchord.core.SettingsRepository
 import jp.ahoashi.guitarchord.entity.Chord
@@ -9,6 +10,7 @@ import jp.ahoashi.guitarchord.entity.TYPE
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -24,6 +26,12 @@ class ChordScreenViewModel
         val sharpError: MutableSharedFlow<Unit> = MutableSharedFlow()
 
         fun getSettingStream() = settingsRepository.getSettingStream()
+
+        fun setLefty(lefty: Boolean) {
+            viewModelScope.launch {
+                settingsRepository.setLefty(lefty)
+            }
+        }
 
         fun setAlphabet(alphabet: String) {
             val chord = findChord(alphabet, uiState.value.sharp, uiState.value.type)

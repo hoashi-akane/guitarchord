@@ -4,4 +4,7 @@
     <string name = "middle_finger">中</string>
     <string name = "ring_finger">薬</string>
     <string name = "little_finger">小</string>
+
+    <string name= "setting">設定</string>
+    <string name="setting_lefty">レフティー</string>
 </resources>

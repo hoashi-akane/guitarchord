@@ -8,11 +8,15 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import jp.ahoashi.guitarchord.core.SettingsRepository
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class SettingsRepositoryImpl(
     val context: Context,
+    val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : SettingsRepository {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -23,11 +27,12 @@ class SettingsRepositoryImpl(
             )
         }
 
-    override suspend fun setLefty(lefty: Boolean) {
-        context.dataStore.edit {
-            it.set(booleanPreferencesKey("lefty"), lefty)
+    override suspend fun setLefty(lefty: Boolean): Unit =
+        withContext(dispatcher) {
+            context.dataStore.edit {
+                it[booleanPreferencesKey("lefty")] = lefty
+            }
         }
-    }
 
     companion object {
         const val KEY_LEFTY_BOOLEAN = "lefty"
