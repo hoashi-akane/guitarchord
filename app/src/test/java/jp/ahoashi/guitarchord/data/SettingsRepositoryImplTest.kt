@@ -1,14 +1,11 @@
 package jp.ahoashi.guitarchord.data
 
-import io.mockk.coEvery
-import io.mockk.mockk
-import jp.ahoashi.guitarchord.core.SettingsRepository
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -17,17 +14,22 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [33])
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsRepositoryImplTest {
-    private lateinit var mockRepository: SettingsRepository
+    private lateinit var repository: SettingsRepositoryImpl
     private val testDispatcher = StandardTestDispatcher()
-    private val testScope = TestScope(testDispatcher)
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        mockRepository = mockk(relaxed = true)
+        
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        repository = SettingsRepositoryImpl(context, testDispatcher)
     }
 
     @After
@@ -36,36 +38,50 @@ class SettingsRepositoryImplTest {
     }
 
     @Test
-    fun `SettingsRepositoryのgetSettingStreamがleftytrueを返す`() = testScope.runTest {
-        val expectedSetting = SettingsRepository.Setting(lefty = true)
-        coEvery { mockRepository.getSettingStream() } returns flowOf(expectedSetting)
-
-        val result = mockRepository.getSettingStream().first()
-
-        assertTrue("leftyがtrueで取得できること", result.lefty)
+    fun initialStateReturnsFalseForLefty() = runTest(testDispatcher) {
+        val result = repository.getSettingStream().first()
+        
+        assertFalse("初期状態ではleftyがfalseであること", result.lefty)
     }
 
     @Test
-    fun `SettingsRepositoryのgetSettingStreamがleftyfalseを返す`() = testScope.runTest {
-        val expectedSetting = SettingsRepository.Setting(lefty = false)
-        coEvery { mockRepository.getSettingStream() } returns flowOf(expectedSetting)
-
-        val result = mockRepository.getSettingStream().first()
-
-        assertFalse("leftyがfalseで取得できること", result.lefty)
+    fun setLeftyTrueAndGetStreamReturnsTrue() = runTest(testDispatcher) {
+        // leftyをtrueに設定
+        repository.setLefty(true)
+        
+        // 設定が反映されることを確認
+        val result = repository.getSettingStream().first()
+        
+        assertTrue("setLefty(true)後はleftyがtrueであること", result.lefty)
     }
 
     @Test
-    fun `SettingsRepositoryのsetLeftyメソッドが存在する`() {
-        // SettingsRepositoryImplが実装されていることを確認するためのテスト
-        // 実際のDataStoreのテストはandroidTestで行う
-        val implementation = SettingsRepositoryImpl::class.java
-        val methods = implementation.declaredMethods
+    fun setLeftyFalseAndGetStreamReturnsFalse() = runTest(testDispatcher) {
+        // 一度trueに設定
+        repository.setLefty(true)
         
-        val hasSetLeftyMethod = methods.any { it.name == "setLefty" }
-        val hasGetSettingStreamMethod = methods.any { it.name == "getSettingStream" }
+        // falseに設定し直し
+        repository.setLefty(false)
         
-        assertTrue("setLeftyメソッドが実装されていること", hasSetLeftyMethod)
-        assertTrue("getSettingStreamメソッドが実装されていること", hasGetSettingStreamMethod)
+        // 設定が反映されることを確認
+        val result = repository.getSettingStream().first()
+        
+        assertFalse("setLefty(false)後はleftyがfalseであること", result.lefty)
+    }
+
+    @Test
+    fun setLeftyMultipleTimesWorksCorrectly() = runTest(testDispatcher) {
+        // 複数回の設定変更をテスト
+        repository.setLefty(true)
+        var result = repository.getSettingStream().first()
+        assertTrue("1回目: leftyがtrueであること", result.lefty)
+        
+        repository.setLefty(false)
+        result = repository.getSettingStream().first()
+        assertFalse("2回目: leftyがfalseであること", result.lefty)
+        
+        repository.setLefty(true)
+        result = repository.getSettingStream().first()
+        assertTrue("3回目: leftyがtrueであること", result.lefty)
     }
 }
