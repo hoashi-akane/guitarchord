@@ -1,17 +1,28 @@
+# Claude Code Review - 無効化済み
+# 
+# Claude Code Review を再開するには：
+# 1. "on:" セクション（7-15行目）のコメントアウトを解除
+# 2. ジョブ名を "disabled-claude-review" から "claude-review" に変更
+# 3. "if: false" 条件（19行目）を削除
+# 4. 変更をコミットしてプッシュ
+#
 name: Claude Code Review
 
-on:
-  pull_request:
-    types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
+# 無効化済み: Claude Code Review を再開するには以下の行のコメントアウトを解除してください
+# on:
+#   pull_request:
+#     types: [opened, synchronize]
+#     # Optional: Only run on specific file changes
+#     # paths:
+#     #   - "src/**/*.ts"
+#     #   - "src/**/*.tsx"
+#     #   - "src/**/*.js"
+#     #   - "src/**/*.jsx"
 
+# 無効化済み: ジョブを再開するには以下のコメントアウトを解除してください
 jobs:
-  claude-review:
+  disabled-claude-review:
+    if: false  # このジョブは無効化されています
     # Optional: Filter by PR author
     # if: |
     #   github.event.pull_request.user.login == 'external-contributor' ||
