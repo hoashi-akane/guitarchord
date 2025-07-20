@@ -166,17 +166,23 @@ fun ChordScreen(
                             strokeWidth = 2.dp.toPx(),
                         )
 
-                        val offset = Offset(x = offsetX * i - offsetX / 2, y = -40.dp.toPx())
+                        val textResult = text.measure((startFret + i).toString())
+                        val textCenter = Offset(
+                            x = offsetX * i - offsetX / 2,
+                            y = -40.dp.toPx() + textResult.size.height / 2
+                        )
                         scale(
                             scaleX = if (setting.lefty) -1f else 1f,
                             scaleY = 1f,
-                            pivot = offset,
+                            pivot = textCenter,
                         ) {
-                            val textResult = text.measure((startFret + i).toString())
                             drawText(
                                 textLayoutResult = textResult,
                                 color = textColor,
-                                topLeft = Offset(offsetX * i - offsetX / 2 - textResult.size.width / 2, -40.dp.toPx()),
+                                topLeft = Offset(
+                                    x = textCenter.x - textResult.size.width / 2,
+                                    y = textCenter.y - textResult.size.height / 2
+                                ),
                             )
                         }
                     }
@@ -191,6 +197,7 @@ fun ChordScreen(
                         offsetY = offsetY,
                         primary = primaryColor,
                         background = background,
+                        isLefty = setting.lefty,
                     )
                 }
             }
@@ -296,6 +303,7 @@ private fun DrawScope.DrawFingers(
     offsetY: Float,
     primary: Color,
     background: Color,
+    isLefty: Boolean,
 ) {
     fingers.forEachIndexed { index, finger ->
         if (finger.fret == 0) {
@@ -339,7 +347,7 @@ private fun DrawScope.DrawFingers(
                 )
 
             // 文字の中心から左右反転して、文字だけ正しい位置に調整
-            scale(scaleX = -1f, scaleY = 1f, pivot = textCenter) {
+            scale(scaleX = if (isLefty) -1f else 1f, scaleY = 1f, pivot = textCenter) {
                 drawText(
                     textLayoutResult = textResult,
                     color = primary,
@@ -376,7 +384,7 @@ private fun DrawScope.DrawFingers(
                     y = y.toFloat(),
                 )
             // 文字の中心から左右反転して、文字だけ正しい位置に調整
-            scale(scaleX = -1f, scaleY = 1f, pivot = textCenter) {
+            scale(scaleX = if (isLefty) -1f else 1f, scaleY = 1f, pivot = textCenter) {
                 drawText(
                     textLayoutResult = textResult,
                     color = primary,
