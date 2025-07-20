@@ -18,8 +18,8 @@ android {
         applicationId = "jp.ahoashi.guitarchord"
         minSdk = 26
         targetSdk = 35
-        versionCode = 901
-        versionName = "0.9.1"
+        versionCode = 10000
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
