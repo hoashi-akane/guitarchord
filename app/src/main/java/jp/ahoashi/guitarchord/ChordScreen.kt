@@ -316,85 +316,52 @@ private fun DrawScope.DrawFingers(
         val radius = 16.dp.toPx()
         val textResult = textMeasurer.measure(fingerNameList[index])
 
-        // TODO: もうRoundRectで両方作る形で良いかも
-        if (finger.string.start == finger.string.last) {
-            // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
-            drawCircle(
-                color = background,
-                radius = radius,
-                style = Fill,
-                center =
-                    Offset(
-                        x = x.toFloat(),
-                        y = y.toFloat(),
-                    ),
-            )
-            drawCircle(
-                color = primary,
-                radius = radius,
-                style = Stroke(width = 2.dp.toPx()),
-                center =
-                    Offset(
-                        x = x.toFloat(),
-                        y = y.toFloat(),
-                    ),
-            )
-
-            val textCenter =
-                Offset(
-                    x = x.toFloat(),
-                    y = y.toFloat(),
-                )
-
-            // 文字の中心から左右反転して、文字だけ正しい位置に調整
-            scale(scaleX = if (isLefty) -1f else 1f, scaleY = 1f, pivot = textCenter) {
-                drawText(
-                    textLayoutResult = textResult,
-                    color = primary,
-                    topLeft =
-                        Offset(
-                            x = textCenter.x - textResult.size.width / 2.toFloat(),
-                            y = textCenter.y - textResult.size.height / 2.toFloat(),
-                        ),
-                )
-            }
+        // 単弦でも複数弦でも同じロジックで処理
+        val endY = (finger.string.last - 1) * offsetY
+        val circleSize = radius * 2
+        val height = if (finger.string.start == finger.string.last) {
+            circleSize
         } else {
-            // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
-            val endY = (finger.string.last - 1) * offsetY
-            val circleSize = radius * 2
-            drawRoundRect(
-                color = background,
-                style = Fill,
-                topLeft = Offset(x - radius, y - radius),
-                size = Size(circleSize, endY + circleSize - y),
-                cornerRadius = CornerRadius(radius, radius),
-            )
+            endY - y + circleSize
+        }
+        
+        // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
+        drawRoundRect(
+            color = background,
+            style = Fill,
+            topLeft = Offset(x - radius, y - radius),
+            size = Size(circleSize, height),
+            cornerRadius = CornerRadius(radius, radius),
+        )
 
-            drawRoundRect(
+        drawRoundRect(
+            color = primary,
+            style = Stroke(width = 2.dp.toPx()),
+            topLeft = Offset(x - radius, y - radius),
+            size = Size(circleSize, height),
+            cornerRadius = CornerRadius(radius, radius),
+        )
+
+        // テキストの中心位置を計算
+        val textCenterY = if (finger.string.start == finger.string.last) {
+            y
+        } else {
+            (y + endY) / 2
+        }
+        
+        val textCenter = Offset(x = x, y = textCenterY)
+        
+        // 文字の中心から左右反転して、文字だけ正しい位置に調整
+        scale(scaleX = if (isLefty) -1f else 1f, scaleY = 1f, pivot = textCenter) {
+            drawText(
+                textLayoutResult = textResult,
                 color = primary,
-                style = Stroke(width = 2.dp.toPx()),
-                topLeft = Offset(x - radius, y - radius),
-                size = Size(circleSize, endY + circleSize - y),
-                cornerRadius = CornerRadius(radius, radius),
+                topLeft =
+                    Offset(
+                        x = textCenter.x - textResult.size.width / 2,
+                        y = textCenter.y - textResult.size.height / 2,
+                    ),
             )
-
-            val textCenter =
-                Offset(
-                    x = x.toFloat(),
-                    y = y.toFloat(),
-                )
-            // 文字の中心から左右反転して、文字だけ正しい位置に調整
-            scale(scaleX = if (isLefty) -1f else 1f, scaleY = 1f, pivot = textCenter) {
-                drawText(
-                    textLayoutResult = textResult,
-                    color = primary,
-                    topLeft =
-                        Offset(
-                            x = x.toFloat() - textResult.size.width / 2,
-                            y = (y + endY) / 2 - textResult.size.height / 2,
-                        ),
-                )
-            }
         }
     }
 }
