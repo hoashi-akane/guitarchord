@@ -13,6 +13,8 @@ ksp = "2.1.20-1.0.32"
 googleServices = "4.4.2"
 firebaseBom = "33.15.0"
 datastore = "1.1.7"
+mockk = "1.13.13"
+coroutines = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +39,8 @@ hilt-navigation-compose = {group = "androidx.hilt", name ="hilt-navigation-compo
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 analytics = { group = "com.google.firebase", name = "firebase-analytics"}
 crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics"}
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
