@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace = "jp.ahoashi.guitarchord"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         androidResources.localeFilters.addAll(listOf("ja"))
 
         applicationId = "jp.ahoashi.guitarchord"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 10000
         versionName = "1.0.0"
 
