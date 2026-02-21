@@ -13,7 +13,14 @@ captures/
 .externalNativeBuild/
 .cxx/
 *.apk
+*.aab
 output.json
+
+# Release outputs
+app/release/
+
+# Gradle generated files
+gradle/gradle-daemon-jvm.properties
 
 # IntelliJ
 *.iml
