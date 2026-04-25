@@ -43,8 +43,8 @@ data class Chord(
 enum class TYPE(
     val displayName: String,
 ) {
-    MAJOR("M"),
-    MINOR("m"),
+    MAJOR("Major"),
+    MINOR("minor"),
     M7("maj7"),
     SEVENTH("7"),
     MINOR7("m7"),
