@@ -39,8 +39,8 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,8 +102,34 @@ fun ChordScreen(
             modifier
                 .fillMaxHeight()
                 .verticalScroll(scrollableState)
-                .padding(start = 20.dp, end = 20.dp, top = 60.dp),
+                .padding(start = 20.dp, end = 20.dp),
     ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            Text(
+                text = uiState.alphabet + if (uiState.sharp == Sharp.SET) "#" else "",
+                fontSize = 42.sp,
+                color = MaterialTheme.colorScheme.primary,
+                lineHeight = 42.sp,
+            )
+            val typeText = uiState.type?.displayName ?: ""
+            if (typeText.isNotEmpty()) {
+                Text(
+                    text = typeText,
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp),
+                    lineHeight = 24.sp,
+                )
+            }
+        }
+
         Row {
             val textColor = MaterialTheme.colorScheme.onSurface
             val primaryColor = MaterialTheme.colorScheme.primary
@@ -119,7 +145,7 @@ fun ChordScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp)
+                        .padding(start = 10.dp, end = 10.dp, top = 40.dp)
                         .height(200.dp),
             ) {
                 val offsetY = size.height / 5f
@@ -237,17 +263,11 @@ private fun ColumnScope.AlphabetButtons(
     setAlphabet: (String) -> Unit,
     setSharp: (Sharp) -> Unit,
 ) {
-    Text(
+    Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp, bottom = 20.dp),
-        text = uiState.alphabet + if (uiState.sharp == Sharp.SET) "#" else "",
-        textAlign = TextAlign.Center,
-        fontSize = 30.sp,
-    )
-    Row(
-        modifier = Modifier.fillMaxWidth(),
+                .padding(top = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChordOutlineButton(
@@ -292,18 +312,11 @@ private fun ColumnScope.TypeButtons(
     uiState: ChordScreenViewModel.ChordScreenUiState,
     setType: (TYPE) -> Unit,
 ) {
-    Text(
+    FlowRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 20.dp),
-        text = uiState.type?.displayName ?: "",
-        textAlign = TextAlign.Center,
-        fontSize = 30.sp,
-    )
-    FlowRow(
-        modifier =
-            Modifier.fillMaxWidth(),
+                .padding(top = 16.dp),
         overflow = FlowRowOverflow.Visible,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
