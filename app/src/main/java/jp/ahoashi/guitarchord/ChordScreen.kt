@@ -126,6 +126,8 @@ fun ChordScreen(
                 val offsetX = size.width / 4f
                 // 開放弦の記号を表示 TODO: 位置調整が課題だが、○を描画するだけであればCanvasで描画しない方が楽
                 val openStrings = uiState.chord?.type?.openString ?: emptySet()
+                val muteStrings = uiState.chord?.type?.muteString ?: emptySet()
+
                 scale(scaleX = if (setting.lefty) -1f else 1f, scaleY = 1f) {
                     openStrings.forEach {
                         drawCircle(
@@ -137,6 +139,24 @@ fun ChordScreen(
                                     x = -8.dp.toPx() + -4.dp.toPx(),
                                     y = offsetY * (it - 1).toFloat(),
                                 ),
+                        )
+                    }
+
+                    muteStrings.forEach {
+                        val centerX = -8.dp.toPx() + -4.dp.toPx()
+                        val centerY = offsetY * (it - 1).toFloat()
+                        val halfSize = 8.dp.toPx()
+                        drawLine(
+                            color = primaryColor,
+                            start = Offset(centerX - halfSize, centerY - halfSize),
+                            end = Offset(centerX + halfSize, centerY + halfSize),
+                            strokeWidth = 2.dp.toPx(),
+                        )
+                        drawLine(
+                            color = primaryColor,
+                            start = Offset(centerX + halfSize, centerY - halfSize),
+                            end = Offset(centerX - halfSize, centerY + halfSize),
+                            strokeWidth = 2.dp.toPx(),
                         )
                     }
 
@@ -167,10 +187,11 @@ fun ChordScreen(
                         )
 
                         val textResult = text.measure((startFret + i).toString())
-                        val textCenter = Offset(
-                            x = offsetX * i - offsetX / 2,
-                            y = -40.dp.toPx() + textResult.size.height / 2
-                        )
+                        val textCenter =
+                            Offset(
+                                x = offsetX * i - offsetX / 2,
+                                y = -40.dp.toPx() + textResult.size.height / 2,
+                            )
                         scale(
                             scaleX = if (setting.lefty) -1f else 1f,
                             scaleY = 1f,
@@ -179,10 +200,11 @@ fun ChordScreen(
                             drawText(
                                 textLayoutResult = textResult,
                                 color = textColor,
-                                topLeft = Offset(
-                                    x = textCenter.x - textResult.size.width / 2,
-                                    y = textCenter.y - textResult.size.height / 2
-                                ),
+                                topLeft =
+                                    Offset(
+                                        x = textCenter.x - textResult.size.width / 2,
+                                        y = textCenter.y - textResult.size.height / 2,
+                                    ),
                             )
                         }
                     }
@@ -319,12 +341,13 @@ private fun DrawScope.DrawFingers(
         // 単弦でも複数弦でも同じロジックで処理
         val endY = (finger.string.last - 1) * offsetY
         val circleSize = radius * 2
-        val height = if (finger.string.start == finger.string.last) {
-            circleSize
-        } else {
-            endY - y + circleSize
-        }
-        
+        val height =
+            if (finger.string.start == finger.string.last) {
+                circleSize
+            } else {
+                endY - y + circleSize
+            }
+
         // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
         drawRoundRect(
             color = background,
@@ -343,14 +366,15 @@ private fun DrawScope.DrawFingers(
         )
 
         // テキストの中心位置を計算
-        val textCenterY = if (finger.string.start == finger.string.last) {
-            y
-        } else {
-            (y + endY) / 2
-        }
-        
+        val textCenterY =
+            if (finger.string.start == finger.string.last) {
+                y
+            } else {
+                (y + endY) / 2
+            }
+
         val textCenter = Offset(x = x, y = textCenterY)
-        
+
         // 文字の中心から左右反転して、文字だけ正しい位置に調整
         scale(scaleX = if (isLefty) -1f else 1f, scaleY = 1f, pivot = textCenter) {
             drawText(

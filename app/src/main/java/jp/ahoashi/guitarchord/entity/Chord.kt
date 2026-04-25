@@ -9,7 +9,16 @@ data class Chord(
         val type: TYPE,
         val fingerAlign: Fingers,
         val openString: Set<Int> = setOf(),
-    )
+    ) {
+        val muteString: Set<Int>
+            get() {
+                val playedStrings = openString.toMutableSet()
+                listOf(fingerAlign.index, fingerAlign.middle, fingerAlign.ling, fingerAlign.little)
+                    .filter { it != FingerPosition.EMPTY }
+                    .forEach { playedStrings.addAll(it.string.toSet()) }
+                return (1..6).toSet() - playedStrings
+            }
+    }
 
     data class Fingers(
         val index: FingerPosition,
