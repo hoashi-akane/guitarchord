@@ -1,5 +1,6 @@
 package jp.ahoashi.guitarchord.topbar
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -16,8 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.UserMessagingPlatform
 import jp.ahoashi.guitarchord.ChordScreenViewModel
 import jp.ahoashi.guitarchord.R
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
@@ -27,8 +31,14 @@ fun ChordScreenSettingsButton(
     modifier: Modifier = Modifier,
     viewModel: ChordScreenViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     var isExpanded by remember { mutableStateOf(false) }
     val setting by viewModel.settingsRepository.getSettingStream().collectAsState(Setting())
+
+    val consentInformation = UserMessagingPlatform.getConsentInformation(context)
+    val showPrivacyEntry =
+        consentInformation.privacyOptionsRequirementStatus ==
+            ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED
 
     Box(modifier = modifier) {
         IconButton(onClick = { isExpanded = !isExpanded }) {
@@ -51,6 +61,15 @@ fun ChordScreenSettingsButton(
                 },
                 onClick = { viewModel.setLefty(!setting.lefty) },
             )
+            if (showPrivacyEntry) {
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(R.string.privacy_options)) },
+                    onClick = {
+                        isExpanded = false
+                        UserMessagingPlatform.showPrivacyOptionsForm(context as Activity) {}
+                    },
+                )
+            }
         }
     }
 }
