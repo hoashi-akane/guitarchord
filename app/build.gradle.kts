@@ -68,6 +68,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.analytics)
     implementation(libs.crashlytics)
+    implementation(libs.play.services.ads)
+    implementation(libs.ump)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

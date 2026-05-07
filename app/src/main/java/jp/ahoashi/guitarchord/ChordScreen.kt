@@ -105,7 +105,6 @@ fun ChordScreen(
                 .fillMaxHeight()
                 .verticalScroll(scrollableState)
                 .statusBarsPadding()
-                .navigationBarsPadding()
                 .padding(start = 20.dp, end = 20.dp, top = 0.dp),
     ) {
         Row(
@@ -139,12 +138,7 @@ fun ChordScreen(
             val primaryColor = MaterialTheme.colorScheme.primary
             val outline = MaterialTheme.colorScheme.outlineVariant
             val background = MaterialTheme.colorScheme.background
-            val firstLineColor =
-                if (startFret == 0) {
-                    primaryColor
-                } else {
-                    outline
-                }
+            val firstLineColor = if (startFret == 0) primaryColor else outline
             Canvas(
                 modifier =
                     Modifier
@@ -271,7 +265,7 @@ private fun ColumnScope.AlphabetButtons(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
+                .padding(top = 30.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChordOutlineButton(
