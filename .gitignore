@@ -39,4 +39,4 @@ google-services.json
 ktlint-compose-0.4.22-all.jar
 
 # Claude Code local settings
-.claude/settings.local.json
+.claude/
