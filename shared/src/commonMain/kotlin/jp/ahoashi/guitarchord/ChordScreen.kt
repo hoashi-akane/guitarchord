@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.FlowRowOverflow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -38,19 +36,23 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ahoashi.guitarchord.ChordScreenViewModel.Companion.Sharp
-import org.koin.androidx.compose.koinViewModel
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 import jp.ahoashi.guitarchord.entity.Chord
 import jp.ahoashi.guitarchord.entity.TYPE
+import jp.ahoashi.guitarchord.generated.resources.Res
+import jp.ahoashi.guitarchord.generated.resources.index_finger
+import jp.ahoashi.guitarchord.generated.resources.little_finger
+import jp.ahoashi.guitarchord.generated.resources.middle_finger
+import jp.ahoashi.guitarchord.generated.resources.ring_finger
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * TODO: 表示デザインカスタム機能（文字、記号、アルファベット？）
@@ -93,10 +95,10 @@ fun ChordScreen(
 
     val fingerNameList =
         listOf(
-            stringResource(R.string.index_finger),
-            stringResource(R.string.middle_finger),
-            stringResource(R.string.ring_finger),
-            stringResource(R.string.little_finger),
+            stringResource(Res.string.index_finger),
+            stringResource(Res.string.middle_finger),
+            stringResource(Res.string.ring_finger),
+            stringResource(Res.string.little_finger),
         )
 
     Column(
@@ -315,7 +317,6 @@ private fun ColumnScope.TypeButtons(
             Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-        overflow = FlowRowOverflow.Visible,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         for (type in TYPE.entries) {

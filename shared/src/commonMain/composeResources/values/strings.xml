@@ -1,0 +1,6 @@
+<resources>
+    <string name="index_finger">1</string>
+    <string name="middle_finger">2</string>
+    <string name="ring_finger">3</string>
+    <string name="little_finger">4</string>
+</resources>
