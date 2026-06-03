@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "guitarchord"
 include(":app")
+include(":shared")
