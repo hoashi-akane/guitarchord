@@ -4,17 +4,22 @@ import android.app.Application
 import com.google.android.gms.ads.MobileAds
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.UserMessagingPlatform
-import dagger.hilt.android.HiltAndroidApp
+import jp.ahoashi.guitarchord.data.module.appModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
-@HiltAndroidApp
 class GuitarChordApplication : Application() {
     private lateinit var consentInformation: ConsentInformation
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidContext(this@GuitarChordApplication)
+            modules(appModule)
+        }
         consentInformation = UserMessagingPlatform.getConsentInformation(this)
 
         CoroutineScope(Dispatchers.IO).launch {

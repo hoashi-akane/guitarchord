@@ -1,22 +1,13 @@
 package jp.ahoashi.guitarchord.data.module
 
-import android.content.Context
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import jp.ahoashi.guitarchord.ChordScreenViewModel
 import jp.ahoashi.guitarchord.core.SettingsRepository
 import jp.ahoashi.guitarchord.data.SettingsRepositoryImpl
-import javax.inject.Singleton
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class SettingsRepositoryModule {
-    @Provides
-    @Singleton
-    fun provideSettingsRepository(
-        @ApplicationContext
-        context: Context,
-    ): SettingsRepository = SettingsRepositoryImpl(context)
+val appModule = module {
+    single<SettingsRepository> { SettingsRepositoryImpl(androidContext()) }
+    viewModel { ChordScreenViewModel(get()) }
 }

@@ -2,8 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.google.service)
     alias(libs.plugins.crashlytics)
 }
@@ -49,10 +47,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
-    ksp(libs.kotlin.metadata)
-    implementation(libs.hilt.navigation.compose)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore)

@@ -19,11 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
-import dagger.hilt.android.AndroidEntryPoint
 import jp.ahoashi.guitarchord.topbar.ChordScreenSettingsButton
 import jp.ahoashi.guitarchord.ui.theme.GuitarchordTheme
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val canShowAds = mutableStateOf(false)
 

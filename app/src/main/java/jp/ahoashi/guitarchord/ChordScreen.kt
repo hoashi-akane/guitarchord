@@ -46,8 +46,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import jp.ahoashi.guitarchord.ChordScreenViewModel.Companion.Sharp
+import org.koin.androidx.compose.koinViewModel
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 import jp.ahoashi.guitarchord.entity.Chord
 import jp.ahoashi.guitarchord.entity.TYPE
@@ -58,7 +58,7 @@ import jp.ahoashi.guitarchord.entity.TYPE
 @Composable
 fun ChordScreen(
     modifier: Modifier = Modifier,
-    viewModel: ChordScreenViewModel = viewModel(),
+    viewModel: ChordScreenViewModel = koinViewModel(),
 ) {
     val text = rememberTextMeasurer(8)
     val fingerText = rememberTextMeasurer(6)

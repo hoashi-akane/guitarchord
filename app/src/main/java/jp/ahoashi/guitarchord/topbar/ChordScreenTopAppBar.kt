@@ -19,17 +19,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.UserMessagingPlatform
 import jp.ahoashi.guitarchord.ChordScreenViewModel
 import jp.ahoashi.guitarchord.R
+import org.koin.androidx.compose.koinViewModel
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 
 @Composable
 fun ChordScreenSettingsButton(
     modifier: Modifier = Modifier,
-    viewModel: ChordScreenViewModel = hiltViewModel(),
+    viewModel: ChordScreenViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     var isExpanded by remember { mutableStateOf(false) }
