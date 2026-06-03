@@ -17,11 +17,10 @@ kotlin {
 
     val xcframeworkName = "shared"
     val xcFramework = XCFramework(xcframeworkName)
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = xcframeworkName
             isStatic = true
-
             binaryOption("bundleId", "jp.ahoashi.guitarchord.$xcframeworkName")
             xcFramework.add(this)
         }

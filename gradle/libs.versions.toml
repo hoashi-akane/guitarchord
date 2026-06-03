@@ -1,21 +1,22 @@
 [versions]
 agp = "9.1.1"
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2026.04.01"
-koin = "4.0.4"
-composeMultiplatform = "1.8.0"
+composeBom = "2026.05.01"
+koin = "4.2.1"
+composeMultiplatform = "1.11.1"
 googleServices = "4.4.4"
-firebaseBom = "34.12.0"
-playServicesAds = "25.2.0"
+firebaseBom = "34.14.0"
+playServicesAds = "25.3.0"
 datastore = "1.2.1"
 mockk = "1.14.9"
-coroutines = "1.10.2"
+coroutines = "1.11.0"
+uiToolingPreview = "1.11.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,7 @@ lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmode
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-compose-multiplatform = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
+ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
 ump = { group = "com.google.android.ump", name = "user-messaging-platform", version = "4.0.0" }
 
 [plugins]
