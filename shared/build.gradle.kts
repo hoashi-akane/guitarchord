@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -14,10 +15,15 @@ kotlin {
         }
     }
 
+    val xcframeworkName = "shared"
+    val xcFramework = XCFramework(xcframeworkName)
     listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "shared"
+            baseName = xcframeworkName
             isStatic = true
+
+            binaryOption("bundleId", "jp.ahoashi.guitarchord.$xcframeworkName")
+            xcFramework.add(this)
         }
     }
 
