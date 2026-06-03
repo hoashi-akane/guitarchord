@@ -1,7 +1,16 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
-dependencies {
-    implementation(libs.kotlinx.coroutines.core)
+kotlin {
+    jvm()
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+        }
+    }
 }
