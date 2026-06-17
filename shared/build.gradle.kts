@@ -3,13 +3,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose)
 }
 
 kotlin {
-    androidTarget {
+    android {
+        namespace = "jp.ahoashi.guitarchord.shared"
+        compileSdk = 36
+        minSdk = 26
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
         }
@@ -43,22 +46,13 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
         }
+        iosMain.dependencies {
+            implementation(compose.materialIconsExtended)
+        }
     }
 }
 
 compose.resources {
     publicResClass = true
     packageOfResClass = "jp.ahoashi.guitarchord.generated.resources"
-}
-
-android {
-    namespace = "jp.ahoashi.guitarchord.shared"
-    compileSdk = 36
-    defaultConfig {
-        minSdk = 26
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
 }
