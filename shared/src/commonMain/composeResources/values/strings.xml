@@ -3,4 +3,12 @@
     <string name="middle_finger">2</string>
     <string name="ring_finger">3</string>
     <string name="little_finger">4</string>
+    <string name="setting_lefty">lefty</string>
+    <string name="privacy_options">Privacy options</string>
+    <string name="setting_theme_color">Theme Color</string>
+    <string name="theme_teal">Teal</string>
+    <string name="theme_red">Red</string>
+    <string name="theme_blue">Blue</string>
+    <string name="theme_green">Green</string>
+    <string name="theme_yellow">Yellow</string>
 </resources>

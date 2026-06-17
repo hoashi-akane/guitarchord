@@ -5,7 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import jp.ahoashi.guitarchord.core.AppTheme
 import jp.ahoashi.guitarchord.core.SettingsRepository
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,17 +26,27 @@ class SettingsRepositoryImpl(
         context.dataStore.data.map {
             Setting(
                 lefty = it[booleanPreferencesKey(KEY_LEFTY_BOOLEAN)] == true,
+                theme = AppTheme.entries.find { t -> t.name == it[stringPreferencesKey(KEY_THEME)] }
+                    ?: AppTheme.TEAL,
             )
         }
 
     override suspend fun setLefty(lefty: Boolean): Unit =
         withContext(dispatcher) {
             context.dataStore.edit {
-                it[booleanPreferencesKey("lefty")] = lefty
+                it[booleanPreferencesKey(KEY_LEFTY_BOOLEAN)] = lefty
+            }
+        }
+
+    override suspend fun setTheme(theme: AppTheme): Unit =
+        withContext(dispatcher) {
+            context.dataStore.edit {
+                it[stringPreferencesKey(KEY_THEME)] = theme.name
             }
         }
 
     companion object {
         const val KEY_LEFTY_BOOLEAN = "lefty"
+        const val KEY_THEME = "theme"
     }
 }

@@ -3,4 +3,12 @@
     <string name="middle_finger">中</string>
     <string name="ring_finger">薬</string>
     <string name="little_finger">小</string>
+    <string name="setting_lefty">レフティー</string>
+    <string name="privacy_options">プライバシー設定</string>
+    <string name="setting_theme_color">テーマカラー</string>
+    <string name="theme_teal">ティール</string>
+    <string name="theme_red">赤</string>
+    <string name="theme_blue">青</string>
+    <string name="theme_green">緑</string>
+    <string name="theme_yellow">黄色</string>
 </resources>

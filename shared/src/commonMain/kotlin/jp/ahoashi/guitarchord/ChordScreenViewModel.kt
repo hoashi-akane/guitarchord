@@ -2,6 +2,7 @@ package jp.ahoashi.guitarchord
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import jp.ahoashi.guitarchord.core.AppTheme
 import jp.ahoashi.guitarchord.core.SettingsRepository
 import jp.ahoashi.guitarchord.entity.Chord
 import jp.ahoashi.guitarchord.entity.ChordList
@@ -25,6 +26,12 @@ class ChordScreenViewModel(
         fun setLefty(lefty: Boolean) {
             viewModelScope.launch {
                 settingsRepository.setLefty(lefty)
+            }
+        }
+
+        fun setTheme(theme: AppTheme) {
+            viewModelScope.launch {
+                settingsRepository.setTheme(theme)
             }
         }
 
