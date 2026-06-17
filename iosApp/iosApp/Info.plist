@@ -41,5 +41,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
     <key>CADisableMinimumFrameDurationOnPhone</key><true/>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-9272487388140178~1616740129</string>
 </dict>
 </plist>
