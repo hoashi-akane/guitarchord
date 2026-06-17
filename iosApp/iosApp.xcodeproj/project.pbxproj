@@ -12,6 +12,8 @@
 		AA000000000000000000B003 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = AA000000000000000000SPD1 /* GoogleMobileAds */; };
 		AA000000000000000000B004 /* GoogleUserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = AA000000000000000000SPD2 /* GoogleUserMessagingPlatform */; };
 		AF19499E2FE2F1810079F8D7 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = AF19499D2FE2F1810079F8D7 /* AppIcon.icon */; };
+		AF1949A52FE2F9F50079F8D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AF1949A32FE2F9F50079F8D7 /* InfoPlist.strings */; };
+		AF1949A62FE2F9F50079F8D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AF1949A02FE2F9F50079F8D7 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,8 @@
 		AA000000000000000000A003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA000000000000000000A004 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF19499D2FE2F1810079F8D7 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		AF19499F2FE2F9F50079F8D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
+		AF1949A22FE2F9F50079F8D7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +50,8 @@
 		AA000000000000000000G002 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				AF1949A12FE2F9F50079F8D7 /* en.lproj */,
+				AF1949A42FE2F9F50079F8D7 /* ja.lproj */,
 				AF19499D2FE2F1810079F8D7 /* AppIcon.icon */,
 				AA000000000000000000A001 /* iOSApp.swift */,
 				AA000000000000000000A002 /* ContentView.swift */,
@@ -60,6 +66,22 @@
 				AA000000000000000000A004 /* iosApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AF1949A12FE2F9F50079F8D7 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				AF1949A02FE2F9F50079F8D7 /* InfoPlist.strings */,
+			);
+			path = en.lproj;
+			sourceTree = "<group>";
+		};
+		AF1949A42FE2F9F50079F8D7 /* ja.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				AF1949A32FE2F9F50079F8D7 /* InfoPlist.strings */,
+			);
+			path = ja.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -130,6 +152,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF1949A52FE2F9F50079F8D7 /* InfoPlist.strings in Resources */,
+				AF1949A62FE2F9F50079F8D7 /* InfoPlist.strings in Resources */,
 				AF19499E2FE2F1810079F8D7 /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,6 +192,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		AF1949A02FE2F9F50079F8D7 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AF19499F2FE2F9F50079F8D7 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		AF1949A32FE2F9F50079F8D7 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AF1949A22FE2F9F50079F8D7 /* ja */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		AA000000000000000000C001 /* Debug */ = {
