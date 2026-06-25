@@ -2,6 +2,7 @@ import SwiftUI
 import shared
 import GoogleMobileAds
 import UserMessagingPlatform
+import AppTrackingTransparency
 
 @MainActor
 class AdsManager: ObservableObject {
@@ -33,9 +34,17 @@ class AdsManager: ObservableObject {
 
     private func updateStatus() {
         if UMPConsentInformation.sharedInstance.canRequestAds {
-            AdsState.shared.setCanShowAds(value: true)
+            requestATT()
         }
         updatePrivacyEntryVisibility()
+    }
+
+    private func requestATT() {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            Task { @MainActor in
+                AdsState.shared.setCanShowAds(value: true)
+            }
+        }
     }
 
     private func updatePrivacyEntryVisibility() {
