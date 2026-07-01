@@ -109,10 +109,20 @@ private suspend fun loadAllLicenses(): List<LibraryLicense> {
             }
     }.getOrDefault(emptyList())
 
-    return (gradleLicenses + iosLicenses)
+    return (gradleLicenses + iosLicenses + manualAcknowledgements)
         .distinctBy { it.name.lowercase() }
         .sortedBy { it.name.lowercase() }
 }
+
+// Gradle依存/iOS SPM依存の自動収集の対象外（アセットとして同梱しているデータ）のライセンス表示。
+private val manualAcknowledgements = listOf(
+    LibraryLicense(
+        name = "@tombatossals/chords-db",
+        version = "0.5.1",
+        license = "MIT",
+        url = "https://github.com/tombatossals/chords-db",
+    ),
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

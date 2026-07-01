@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.android.gms.ads.MobileAds
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.UserMessagingPlatform
+import jp.ahoashi.guitarchord.chordsdb.chordsDbModule
 import jp.ahoashi.guitarchord.data.module.appModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,7 @@ class GuitarChordApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@GuitarChordApplication)
-            modules(appModule)
+            modules(appModule, chordsDbModule)
         }
         consentInformation = UserMessagingPlatform.getConsentInformation(this)
 
