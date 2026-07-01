@@ -8,4 +8,5 @@
     <string name= "setting">setting</string>
     <string name= "setting_lefty">lefty</string>
     <string name="privacy_options">Privacy options</string>
+    <string name="licenses">Licenses</string>
 </resources>

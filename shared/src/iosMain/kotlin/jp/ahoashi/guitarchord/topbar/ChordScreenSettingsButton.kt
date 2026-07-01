@@ -29,6 +29,7 @@ import jp.ahoashi.guitarchord.ChordScreenViewModel
 import jp.ahoashi.guitarchord.core.AppTheme
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 import jp.ahoashi.guitarchord.generated.resources.Res
+import jp.ahoashi.guitarchord.generated.resources.licenses
 import jp.ahoashi.guitarchord.generated.resources.privacy_options
 import jp.ahoashi.guitarchord.generated.resources.setting_lefty
 import jp.ahoashi.guitarchord.generated.resources.setting_theme_color
@@ -53,8 +54,9 @@ fun ChordScreenSettingsButton(
     modifier: Modifier = Modifier,
     viewModel: ChordScreenViewModel = koinViewModel(),
     onPrivacyOptionsClick: (() -> Unit)? = null,
+    onLicensesClick: () -> Unit = {},
 ) {
-    val setting by viewModel.getSettingStream().collectAsState(Setting())
+    val setting by viewModel.getSettingStream().collectAsState()
     var isExpanded by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
@@ -124,6 +126,15 @@ fun ChordScreenSettingsButton(
                     },
                 )
             }
+
+            HorizontalDivider()
+            DropdownMenuItem(
+                text = { Text(text = stringResource(Res.string.licenses)) },
+                onClick = {
+                    isExpanded = false
+                    onLicensesClick()
+                },
+            )
 
             if (onPrivacyOptionsClick != null) {
                 HorizontalDivider()

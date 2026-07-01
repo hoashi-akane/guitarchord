@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -38,7 +39,9 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(compose.materialIconsExtended)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.lifecycle.viewmodel)
             implementation(libs.koin.core)
             implementation(libs.koin.compose.multiplatform)
@@ -46,9 +49,6 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(compose.preview)
-        }
-        iosMain.dependencies {
-            implementation(compose.materialIconsExtended)
         }
     }
 }

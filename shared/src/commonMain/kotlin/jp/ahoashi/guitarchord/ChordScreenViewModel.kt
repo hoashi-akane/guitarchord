@@ -7,8 +7,12 @@ import jp.ahoashi.guitarchord.core.SettingsRepository
 import jp.ahoashi.guitarchord.entity.Chord
 import jp.ahoashi.guitarchord.entity.ChordList
 import jp.ahoashi.guitarchord.entity.TYPE
+import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,7 +25,14 @@ class ChordScreenViewModel(
         val uiState: MutableStateFlow<ChordScreenUiState> = MutableStateFlow(ChordScreenUiState.Empty)
         val sharpError: MutableSharedFlow<Unit> = MutableSharedFlow()
 
-        fun getSettingStream() = settingsRepository.getSettingStream()
+        val settingState: StateFlow<Setting> = settingsRepository.getSettingStream()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = Setting(),
+            )
+
+        fun getSettingStream() = settingState
 
         fun setLefty(lefty: Boolean) {
             viewModelScope.launch {

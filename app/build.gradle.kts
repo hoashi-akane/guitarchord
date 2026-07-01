@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.service)
     alias(libs.plugins.crashlytics)
+    alias(libs.plugins.licensee)
 }
 
 android {
@@ -44,6 +45,24 @@ kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
+}
+
+licensee {
+    allow("Apache-2.0")
+    allow("MIT")
+    allow("BSD-2-Clause")
+    allow("BSD-3-Clause")
+    allow("ISC")
+    allowUrl("https://developer.android.com/studio/terms.html")
+    allowUrl("https://developers.google.com/terms/")
+}
+
+// ./gradlew :app:copyLicensesToResources でライセンスJSONを再生成する
+tasks.register<Copy>("copyLicensesToResources") {
+    dependsOn("licenseeAndroidRelease")
+    from(layout.buildDirectory.file("reports/licensee/androidRelease/artifacts.json"))
+    into(rootProject.file("shared/src/commonMain/composeResources/files"))
+    rename { "oss_licenses.json" }
 }
 
 dependencies {

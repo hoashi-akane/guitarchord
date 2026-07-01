@@ -13,12 +13,16 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
+import jp.ahoashi.guitarchord.licenses.LicensesScreen
 import jp.ahoashi.guitarchord.topbar.ChordScreenSettingsButton
 import jp.ahoashi.guitarchord.ui.theme.GuitarchordTheme
 
@@ -68,27 +72,33 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             GuitarchordTheme {
+                var showLicenses by remember { mutableStateOf(false) }
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Column {
-                        Box(modifier = Modifier.weight(1f)) {
-                            ChordScreen(modifier = Modifier.fillMaxSize())
-                            ChordScreenSettingsButton(
-                                modifier =
-                                    Modifier
-                                        .align(Alignment.TopEnd)
-                                        .statusBarsPadding(),
-                            )
-                        }
-                        if (canShowAds.value) {
-                            BannerAd(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 4.dp)
-                                        .navigationBarsPadding(),
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.navigationBarsPadding())
+                    if (showLicenses) {
+                        LicensesScreen(onBack = { showLicenses = false })
+                    } else {
+                        Column {
+                            Box(modifier = Modifier.weight(1f)) {
+                                ChordScreen(modifier = Modifier.fillMaxSize())
+                                ChordScreenSettingsButton(
+                                    modifier =
+                                        Modifier
+                                            .align(Alignment.TopEnd)
+                                            .statusBarsPadding(),
+                                    onLicensesClick = { showLicenses = true },
+                                )
+                            }
+                            if (canShowAds.value) {
+                                BannerAd(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 4.dp)
+                                            .navigationBarsPadding(),
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.navigationBarsPadding())
+                            }
                         }
                     }
                 }

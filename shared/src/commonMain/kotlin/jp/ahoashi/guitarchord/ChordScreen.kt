@@ -67,7 +67,7 @@ fun ChordScreen(
     val uiState by viewModel.uiState.collectAsState()
     val scrollableState = rememberScrollState()
 
-    val setting by viewModel.getSettingStream().collectAsState(Setting())
+    val setting by viewModel.getSettingStream().collectAsState()
 
     val fingerAlign = uiState.chord?.type?.fingerAlign
     val fingers =

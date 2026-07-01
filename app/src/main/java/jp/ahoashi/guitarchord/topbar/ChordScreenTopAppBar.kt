@@ -24,16 +24,16 @@ import com.google.android.ump.UserMessagingPlatform
 import jp.ahoashi.guitarchord.ChordScreenViewModel
 import jp.ahoashi.guitarchord.R
 import org.koin.androidx.compose.koinViewModel
-import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 
 @Composable
 fun ChordScreenSettingsButton(
     modifier: Modifier = Modifier,
     viewModel: ChordScreenViewModel = koinViewModel(),
+    onLicensesClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     var isExpanded by remember { mutableStateOf(false) }
-    val setting by viewModel.settingsRepository.getSettingStream().collectAsState(Setting())
+    val setting by viewModel.getSettingStream().collectAsState()
 
     val consentInformation = UserMessagingPlatform.getConsentInformation(context)
     val showPrivacyEntry =
@@ -60,6 +60,13 @@ fun ChordScreenSettingsButton(
                     )
                 },
                 onClick = { viewModel.setLefty(!setting.lefty) },
+            )
+            DropdownMenuItem(
+                text = { Text(text = stringResource(R.string.licenses)) },
+                onClick = {
+                    isExpanded = false
+                    onLicensesClick()
+                },
             )
             if (showPrivacyEntry) {
                 DropdownMenuItem(

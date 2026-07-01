@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Firebase iOS SDK",
+    "version": "11.15.0",
+    "url": "https://github.com/firebase/firebase-ios-sdk",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Google App Measurement",
+    "version": "11.15.0",
+    "url": "https://github.com/google/GoogleAppMeasurement",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Google Data Transport",
+    "version": "10.1.0",
+    "url": "https://github.com/google/GoogleDataTransport",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Google Utilities",
+    "version": "8.1.1",
+    "url": "https://github.com/google/GoogleUtilities",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Google Mobile Ads SDK (iOS)",
+    "version": "11.13.0",
+    "url": "https://github.com/googleads/swift-package-manager-google-mobile-ads",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Google User Messaging Platform (iOS)",
+    "version": "2.7.0",
+    "url": "https://github.com/googleads/swift-package-manager-google-user-messaging-platform",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Google Ads On-Device Conversion SDK",
+    "version": "2.3.0",
+    "url": "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Abseil C++ (binary)",
+    "version": "1.2024072200.0",
+    "url": "https://github.com/google/abseil-cpp-binary",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "gRPC (binary)",
+    "version": "1.69.1",
+    "url": "https://github.com/google/grpc-binary",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "LevelDB",
+    "version": "1.22.5",
+    "url": "https://github.com/firebase/leveldb",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "name": "nanopb",
+    "version": "2.30910.1",
+    "url": "https://github.com/firebase/nanopb",
+    "license": "zlib"
+  },
+  {
+    "name": "Promises",
+    "version": "2.4.1",
+    "url": "https://github.com/google/promises",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Swift Protobuf",
+    "version": "1.38.0",
+    "url": "https://github.com/apple/swift-protobuf",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "GTM Session Fetcher",
+    "version": "4.5.0",
+    "url": "https://github.com/google/gtm-session-fetcher",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Firebase App Check",
+    "version": "11.3.0",
+    "url": "https://github.com/google/app-check",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "Interop iOS for Google SDKs",
+    "version": "101.0.0",
+    "url": "https://github.com/google/interop-ios-for-google-sdks",
+    "license": "Apache-2.0"
+  }
+]
