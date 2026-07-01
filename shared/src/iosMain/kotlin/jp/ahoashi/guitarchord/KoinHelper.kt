@@ -13,7 +13,7 @@ fun initKoin() {
             module {
                 single<SettingsRepository> { SettingsRepositoryImpl() }
                 factory { ChordScreenViewModel(get()) }
-                factory { ChordsDbVoicingsViewModel(get()) }
+                factory { ChordsDbVoicingsViewModel(get(), get()) }
             },
             chordsDbModule,
         )

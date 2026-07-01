@@ -11,5 +11,5 @@ import org.koin.dsl.module
 val appModule = module {
     single<SettingsRepository> { SettingsRepositoryImpl(androidContext()) }
     viewModel { ChordScreenViewModel(get()) }
-    viewModel { ChordsDbVoicingsViewModel(get()) }
+    viewModel { ChordsDbVoicingsViewModel(get(), get()) }
 }
