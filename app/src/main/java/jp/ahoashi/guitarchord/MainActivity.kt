@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
+import jp.ahoashi.guitarchord.chordsdb.ui.ChordsDbVoicingsScreen
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
 import jp.ahoashi.guitarchord.licenses.LicensesScreen
 import jp.ahoashi.guitarchord.topbar.ChordScreenSettingsButton
@@ -78,9 +79,12 @@ class MainActivity : ComponentActivity() {
             val setting by viewModel.getSettingStream().collectAsState(Setting())
             GuitarchordTheme(theme = setting.theme) {
                 var showLicenses by remember { mutableStateOf(false) }
+                var showChordsDbDebug by remember { mutableStateOf(false) }
                 Surface(modifier = Modifier.fillMaxSize()) {
                     if (showLicenses) {
                         LicensesScreen(onBack = { showLicenses = false })
+                    } else if (showChordsDbDebug) {
+                        ChordsDbVoicingsScreen(onBack = { showChordsDbDebug = false })
                     } else {
                         Column {
                             Box(modifier = Modifier.weight(1f)) {
@@ -92,6 +96,7 @@ class MainActivity : ComponentActivity() {
                                             .statusBarsPadding(),
                                     viewModel = viewModel,
                                     onLicensesClick = { showLicenses = true },
+                                    onChordsDbDebugClick = { showChordsDbDebug = true },
                                 )
                             }
                             if (canShowAds.value) {

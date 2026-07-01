@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.UIKitView
 import androidx.compose.ui.window.ComposeUIViewController
+import jp.ahoashi.guitarchord.chordsdb.ui.ChordsDbVoicingsScreen
 import jp.ahoashi.guitarchord.licenses.LicensesScreen
 import jp.ahoashi.guitarchord.core.AppTheme
 import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
@@ -48,6 +49,7 @@ fun MainViewController(
     val setting by viewModel.getSettingStream().collectAsState(Setting())
     val darkTheme = isSystemInDarkTheme()
     var showLicenses by remember { mutableStateOf(false) }
+    var showChordsDbDebug by remember { mutableStateOf(false) }
 
     val colorScheme = when (setting.theme) {
         AppTheme.TEAL -> if (darkTheme) darkScheme else lightScheme
@@ -62,6 +64,8 @@ fun MainViewController(
         Surface(modifier = Modifier.fillMaxSize()) {
             if (showLicenses) {
                 LicensesScreen(onBack = { showLicenses = false })
+            } else if (showChordsDbDebug) {
+                ChordsDbVoicingsScreen(onBack = { showChordsDbDebug = false })
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Box(modifier = Modifier.weight(1f)) {
@@ -73,6 +77,7 @@ fun MainViewController(
                             viewModel = viewModel,
                             onPrivacyOptionsClick = onPrivacyOptionsClick,
                             onLicensesClick = { showLicenses = true },
+                            onChordsDbDebugClick = { showChordsDbDebug = true },
                         )
                     }
                     if (canShowAds && bannerViewFactory != null) {

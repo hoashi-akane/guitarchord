@@ -13,4 +13,5 @@
     <string name="theme_yellow">Yellow</string>
     <string name="theme_mono">Mono</string>
     <string name="licenses">Licenses</string>
+    <string name="chords_db_debug">Chords-db check (debug)</string>
 </resources>
