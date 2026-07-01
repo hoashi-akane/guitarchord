@@ -11,5 +11,6 @@
     <string name="theme_blue">青</string>
     <string name="theme_green">緑</string>
     <string name="theme_yellow">黄色</string>
+    <string name="theme_mono">モノクロ</string>
     <string name="licenses">ライセンス</string>
 </resources>

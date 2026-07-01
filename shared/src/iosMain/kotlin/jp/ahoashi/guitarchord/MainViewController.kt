@@ -32,6 +32,8 @@ import jp.ahoashi.guitarchord.ui.theme.greenLightScheme
 import jp.ahoashi.guitarchord.ui.theme.lightScheme
 import jp.ahoashi.guitarchord.ui.theme.redDarkScheme
 import jp.ahoashi.guitarchord.ui.theme.redLightScheme
+import jp.ahoashi.guitarchord.ui.theme.monoDarkScheme
+import jp.ahoashi.guitarchord.ui.theme.monoLightScheme
 import jp.ahoashi.guitarchord.ui.theme.yellowDarkScheme
 import jp.ahoashi.guitarchord.ui.theme.yellowLightScheme
 import org.koin.compose.viewmodel.koinViewModel
@@ -53,6 +55,7 @@ fun MainViewController(
         AppTheme.BLUE -> if (darkTheme) blueDarkScheme else blueLightScheme
         AppTheme.GREEN -> if (darkTheme) greenDarkScheme else greenLightScheme
         AppTheme.YELLOW -> if (darkTheme) yellowDarkScheme else yellowLightScheme
+        AppTheme.MONO -> if (darkTheme) monoDarkScheme else monoLightScheme
     }
 
     MaterialTheme(colorScheme = colorScheme, typography = AppTypography) {

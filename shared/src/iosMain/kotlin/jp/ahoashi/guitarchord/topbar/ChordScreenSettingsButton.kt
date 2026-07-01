@@ -35,6 +35,7 @@ import jp.ahoashi.guitarchord.generated.resources.setting_lefty
 import jp.ahoashi.guitarchord.generated.resources.setting_theme_color
 import jp.ahoashi.guitarchord.generated.resources.theme_blue
 import jp.ahoashi.guitarchord.generated.resources.theme_green
+import jp.ahoashi.guitarchord.generated.resources.theme_mono
 import jp.ahoashi.guitarchord.generated.resources.theme_red
 import jp.ahoashi.guitarchord.generated.resources.theme_teal
 import jp.ahoashi.guitarchord.generated.resources.theme_yellow
@@ -47,6 +48,7 @@ private val themeColors = listOf(
     AppTheme.BLUE to Color(0xFF5B6B9E),
     AppTheme.GREEN to Color(0xFF5A7A62),
     AppTheme.YELLOW to Color(0xFF7A6E3A),
+    AppTheme.MONO to Color(0xFF2C2C2C),
 )
 
 @Composable
@@ -98,6 +100,7 @@ fun ChordScreenSettingsButton(
                 stringResource(Res.string.theme_blue),
                 stringResource(Res.string.theme_green),
                 stringResource(Res.string.theme_yellow),
+                stringResource(Res.string.theme_mono),
             )
 
             themeColors.forEachIndexed { index, (theme, color) ->
