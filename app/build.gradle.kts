@@ -9,23 +9,26 @@ plugins {
 
 android {
     namespace = "jp.ahoashi.guitarchord"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         androidResources.localeFilters.addAll(listOf("ja"))
 
         applicationId = "jp.ahoashi.guitarchord"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 10102
-        versionName = "1.1.2"
+        targetSdk = 37
+        versionCode = 10105
+        versionName = "1.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            optimization {
+                enable = true // Enables code and resource optimizations.
+            }
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

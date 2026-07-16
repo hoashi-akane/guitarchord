@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# WorkManager（play-services-adsが内部で利用）のRoom生成クラスがR8により
+# リフレクション経由の参照を認識されず難読化・削除され、WorkDatabase生成に失敗するため keep する
+-keep class androidx.work.impl.WorkDatabase { *; }
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-keep class * extends androidx.work.ListenableWorker {
+    <init>(android.content.Context, androidx.work.WorkerParameters);
+}
+-keep class androidx.room.RoomDatabase
