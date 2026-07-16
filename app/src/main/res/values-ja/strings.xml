@@ -7,6 +7,7 @@
 
     <string name= "setting">設定</string>
     <string name="setting_lefty">レフティー</string>
+    <string name="setting_theme_mono">モノクロテーマ</string>
     <string name="privacy_options">プライバシー設定</string>
     <string name="licenses">ライセンス</string>
 </resources>

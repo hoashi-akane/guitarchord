@@ -23,6 +23,7 @@ import com.google.android.ump.ConsentInformation
 import com.google.android.ump.UserMessagingPlatform
 import jp.ahoashi.guitarchord.ChordScreenViewModel
 import jp.ahoashi.guitarchord.R
+import jp.ahoashi.guitarchord.core.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -60,6 +61,20 @@ fun ChordScreenSettingsButton(
                     )
                 },
                 onClick = { viewModel.setLefty(!setting.lefty) },
+            )
+            DropdownMenuItem(
+                text = { Text(text = stringResource(R.string.setting_theme_mono)) },
+                leadingIcon = {
+                    RadioButton(
+                        selected = setting.theme == AppTheme.MONO,
+                        onClick = null,
+                    )
+                },
+                onClick = {
+                    viewModel.setTheme(
+                        if (setting.theme == AppTheme.MONO) AppTheme.TEAL else AppTheme.MONO,
+                    )
+                },
             )
             DropdownMenuItem(
                 text = { Text(text = stringResource(R.string.licenses)) },

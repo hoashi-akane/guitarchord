@@ -7,6 +7,7 @@
     <string name = "little_finger">4</string>
     <string name= "setting">setting</string>
     <string name= "setting_lefty">lefty</string>
+    <string name="setting_theme_mono">Mono theme</string>
     <string name="privacy_options">Privacy options</string>
     <string name="licenses">Licenses</string>
 </resources>
