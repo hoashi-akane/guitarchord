@@ -2,6 +2,7 @@ package jp.ahoashi.guitarchord.chordsdb.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -39,12 +41,13 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import jp.ahoashi.guitarchord.chordsdb.model.ChordVoicingSet
 import jp.ahoashi.guitarchord.chordsdb.muteStringNumbers
 import jp.ahoashi.guitarchord.chordsdb.openStringNumbers
 import jp.ahoashi.guitarchord.chordsdb.toDrawableFingers
-import jp.ahoashi.guitarchord.chordsdb.model.ChordVoicingSet
 import jp.ahoashi.guitarchord.entity.Chord
 import jp.ahoashi.guitarchord.entity.TYPE
 import jp.ahoashi.guitarchord.generated.resources.Res
@@ -74,23 +77,26 @@ fun ChordsDbVoicingsScreen(
 
     val voicing = uiState.currentVoicing
     val fingerAlign = voicing?.toDrawableFingers()
-    val fingers = if (fingerAlign != null) {
-        listOf(fingerAlign.index, fingerAlign.middle, fingerAlign.ling, fingerAlign.little)
-    } else {
-        emptyList()
-    }
+    val fingers =
+        if (fingerAlign != null) {
+            listOf(fingerAlign.index, fingerAlign.middle, fingerAlign.ling, fingerAlign.little)
+        } else {
+            emptyList()
+        }
 
-    val max = fingers
-        .filter { it != Chord.FingerPosition.EMPTY }
-        .maxOfOrNull { it.fret } ?: 0
+    val max =
+        fingers
+            .filter { it != Chord.FingerPosition.EMPTY }
+            .maxOfOrNull { it.fret } ?: 0
     val startFret = if (max <= 4) 0 else max - 4
 
-    val fingerNameList = listOf(
-        stringResource(Res.string.index_finger),
-        stringResource(Res.string.middle_finger),
-        stringResource(Res.string.ring_finger),
-        stringResource(Res.string.little_finger),
-    )
+    val fingerNameList =
+        listOf(
+            stringResource(Res.string.index_finger),
+            stringResource(Res.string.middle_finger),
+            stringResource(Res.string.ring_finger),
+            stringResource(Res.string.little_finger),
+        )
 
     Scaffold(
         topBar = {
@@ -105,16 +111,18 @@ fun ChordsDbVoicingsScreen(
         },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Bottom,
             ) {
@@ -140,10 +148,11 @@ fun ChordsDbVoicingsScreen(
                 val background = MaterialTheme.colorScheme.background
                 val firstLineColor = if (startFret == 0) primaryColor else outline
                 Canvas(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, top = 40.dp)
-                        .height(200.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp, end = 10.dp, top = 40.dp)
+                            .height(200.dp),
                 ) {
                     val offsetY = size.height / 5f
                     val offsetX = size.width / 4f
@@ -156,10 +165,11 @@ fun ChordsDbVoicingsScreen(
                                 color = primaryColor,
                                 radius = 8.dp.toPx(),
                                 style = Stroke(width = 2.dp.toPx()),
-                                center = Offset(
-                                    x = -8.dp.toPx() + -4.dp.toPx(),
-                                    y = offsetY * (it - 1).toFloat(),
-                                ),
+                                center =
+                                    Offset(
+                                        x = -8.dp.toPx() + -4.dp.toPx(),
+                                        y = offsetY * (it - 1).toFloat(),
+                                    ),
                             )
                         }
 
@@ -205,10 +215,11 @@ fun ChordsDbVoicingsScreen(
                             )
 
                             val textResult = text.measure((startFret + i).toString())
-                            val textCenter = Offset(
-                                x = offsetX * i - offsetX / 2,
-                                y = -40.dp.toPx() + textResult.size.height / 2,
-                            )
+                            val textCenter =
+                                Offset(
+                                    x = offsetX * i - offsetX / 2,
+                                    y = -40.dp.toPx() + textResult.size.height / 2,
+                                )
                             scale(
                                 scaleX = if (setting.lefty) -1f else 1f,
                                 scaleY = 1f,
@@ -217,10 +228,11 @@ fun ChordsDbVoicingsScreen(
                                 drawText(
                                     textLayoutResult = textResult,
                                     color = textColor,
-                                    topLeft = Offset(
-                                        x = textCenter.x - textResult.size.width / 2,
-                                        y = textCenter.y - textResult.size.height / 2,
-                                    ),
+                                    topLeft =
+                                        Offset(
+                                            x = textCenter.x - textResult.size.width / 2,
+                                            y = textCenter.y - textResult.size.height / 2,
+                                        ),
                                 )
                             }
                         }
@@ -261,30 +273,40 @@ private fun VoicingPager(
     onNext: () -> Unit,
 ) {
     val voicing = voicingSet?.voicings?.getOrNull(voicingIndex)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+    // タブレットなど広い画面で < > が端に離れすぎないよう、幅に上限を付けて中央に寄せる
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        OutlinedButton(onClick = onPrevious, enabled = voicingSet != null) {
-            Text("<")
-        }
-        val total = voicingSet?.voicings?.size ?: 0
-        val label = if (voicing == null) {
-            "該当なし"
-        } else {
-            "${voicingIndex + 1} / $total  baseFret=${voicing.baseFret}" +
-                if (voicing.isCapoSuggested) " capo" else ""
-        }
-        Text(
-            text = label,
-            modifier = Modifier.padding(horizontal = 12.dp),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        OutlinedButton(onClick = onNext, enabled = voicingSet != null) {
-            Text(">")
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 280.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedButton(onClick = onPrevious, enabled = voicingSet != null) {
+                Text("<")
+            }
+            // ラベル長が変わってもボタン位置がずれないよう、ボタン間の領域を占有して中央に表示する
+            Text(
+                text =
+                    voicing?.let {
+                        "${voicingIndex + 1} / ${voicingSet.voicings.size}"
+                    } ?: "該当なし",
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(horizontal = 12.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            OutlinedButton(onClick = onNext, enabled = voicingSet != null) {
+                Text(">")
+            }
         }
     }
 }
@@ -295,26 +317,30 @@ private fun AlphabetButtons(
     setAlphabet: (String) -> Unit,
 ) {
     FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         for (alphabet in listOf("C", "D", "E", "F", "G", "A", "B")) {
             OutlinedButton(
                 onClick = { setAlphabet(alphabet) },
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = if (uiState.alphabet == alphabet) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onPrimary
-                    },
-                    contentColor = if (uiState.alphabet == alphabet) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    },
-                ),
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        containerColor =
+                            if (uiState.alphabet == alphabet) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onPrimary
+                            },
+                        contentColor =
+                            if (uiState.alphabet == alphabet) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.primary
+                            },
+                    ),
             ) {
                 Text(alphabet)
             }
@@ -329,26 +355,30 @@ private fun TypeButtons(
     setType: (TYPE) -> Unit,
 ) {
     FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         for (type in TYPE.entries) {
             OutlinedButton(
                 onClick = { setType(type) },
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = if (uiState.type == type) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onPrimary
-                    },
-                    contentColor = if (uiState.type == type) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    },
-                ),
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        containerColor =
+                            if (uiState.type == type) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onPrimary
+                            },
+                        contentColor =
+                            if (uiState.type == type) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.primary
+                            },
+                    ),
             ) {
                 Text(maxLines = 1, text = type.displayName)
             }
@@ -372,17 +402,18 @@ private fun DrawScope.DrawFingers(
             return@forEachIndexed
         }
         val x = (finger.fret - firstFlet) * offsetX - (offsetX / 2)
-        val y = (finger.string.start - 1) * offsetY
+        val y = (finger.string.first - 1) * offsetY
         val radius = 16.dp.toPx()
         val textResult = textMeasurer.measure(fingerNameList[index])
 
         val endY = (finger.string.last - 1) * offsetY
         val circleSize = radius * 2
-        val height = if (finger.string.start == finger.string.last) {
-            circleSize
-        } else {
-            endY - y + circleSize
-        }
+        val height =
+            if (finger.string.first == finger.string.last) {
+                circleSize
+            } else {
+                endY - y + circleSize
+            }
 
         drawRoundRect(
             color = background,
@@ -400,11 +431,12 @@ private fun DrawScope.DrawFingers(
             cornerRadius = CornerRadius(radius, radius),
         )
 
-        val textCenterY = if (finger.string.start == finger.string.last) {
-            y
-        } else {
-            (y + endY) / 2
-        }
+        val textCenterY =
+            if (finger.string.first == finger.string.last) {
+                y
+            } else {
+                (y + endY) / 2
+            }
 
         val textCenter = Offset(x = x, y = textCenterY)
 
@@ -412,10 +444,11 @@ private fun DrawScope.DrawFingers(
             drawText(
                 textLayoutResult = textResult,
                 color = primary,
-                topLeft = Offset(
-                    x = textCenter.x - textResult.size.width / 2,
-                    y = textCenter.y - textResult.size.height / 2,
-                ),
+                topLeft =
+                    Offset(
+                        x = textCenter.x - textResult.size.width / 2,
+                        y = textCenter.y - textResult.size.height / 2,
+                    ),
             )
         }
     }
