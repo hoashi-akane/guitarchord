@@ -31,7 +31,6 @@ fun ChordScreenSettingsButton(
     modifier: Modifier = Modifier,
     viewModel: ChordScreenViewModel = koinViewModel(),
     onLicensesClick: () -> Unit = {},
-    onChordsDbDebugClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     var isExpanded by remember { mutableStateOf(false) }
@@ -82,13 +81,6 @@ fun ChordScreenSettingsButton(
                 onClick = {
                     isExpanded = false
                     onLicensesClick()
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(R.string.chords_db_debug)) },
-                onClick = {
-                    isExpanded = false
-                    onChordsDbDebugClick()
                 },
             )
             if (showPrivacyEntry) {

@@ -1,7 +1,7 @@
 package jp.ahoashi.guitarchord
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -9,13 +9,14 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -28,28 +29,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ahoashi.guitarchord.ChordScreenViewModel.Companion.Sharp
-import jp.ahoashi.guitarchord.core.SettingsRepository.Setting
-import jp.ahoashi.guitarchord.entity.Chord
+import jp.ahoashi.guitarchord.chordsdb.model.ChordVoicing
 import jp.ahoashi.guitarchord.entity.TYPE
 import jp.ahoashi.guitarchord.generated.resources.Res
-import jp.ahoashi.guitarchord.generated.resources.index_finger
-import jp.ahoashi.guitarchord.generated.resources.little_finger
-import jp.ahoashi.guitarchord.generated.resources.middle_finger
-import jp.ahoashi.guitarchord.generated.resources.ring_finger
+import jp.ahoashi.guitarchord.generated.resources.other_voicings
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -62,44 +49,10 @@ fun ChordScreen(
     modifier: Modifier = Modifier,
     viewModel: ChordScreenViewModel = koinViewModel(),
 ) {
-    val text = rememberTextMeasurer(8)
-    val fingerText = rememberTextMeasurer(6)
     val uiState by viewModel.uiState.collectAsState()
     val scrollableState = rememberScrollState()
 
     val setting by viewModel.getSettingStream().collectAsState()
-
-    val fingerAlign = uiState.chord?.type?.fingerAlign
-    val fingers =
-        if (fingerAlign != null) {
-            listOf(
-                fingerAlign.index,
-                fingerAlign.middle,
-                fingerAlign.ling,
-                fingerAlign.little,
-            )
-        } else {
-            emptyList()
-        }
-
-    val max =
-        fingers
-            .filter { it != Chord.FingerPosition.EMPTY }
-            .maxOfOrNull { it.fret } ?: 0
-    val startFret =
-        if (max <= 4) {
-            0
-        } else {
-            max - 4
-        }
-
-    val fingerNameList =
-        listOf(
-            stringResource(Res.string.index_finger),
-            stringResource(Res.string.middle_finger),
-            stringResource(Res.string.ring_finger),
-            stringResource(Res.string.little_finger),
-        )
 
     Column(
         modifier =
@@ -135,125 +88,126 @@ fun ChordScreen(
             }
         }
 
-        Row {
-            val textColor = MaterialTheme.colorScheme.onSurface
-            val primaryColor = MaterialTheme.colorScheme.primary
-            val outline = MaterialTheme.colorScheme.outlineVariant
-            val background = MaterialTheme.colorScheme.background
-            val firstLineColor = if (startFret == 0) primaryColor else outline
-            Canvas(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, top = 40.dp)
-                        .height(200.dp),
-            ) {
-                val offsetY = size.height / 5f
-                val offsetX = size.width / 4f
-                // 開放弦の記号を表示 TODO: 位置調整が課題だが、○を描画するだけであればCanvasで描画しない方が楽
-                val openStrings = uiState.chord?.type?.openString ?: emptySet()
-                val muteStrings = uiState.chord?.type?.muteString ?: emptySet()
+        // 選択中の押さえ方を大きく表示する(初期表示は先頭=基本の形)
+        ChordDiagram(
+            voicing = uiState.currentVoicing,
+            isLefty = setting.lefty,
+        )
 
-                scale(scaleX = if (setting.lefty) -1f else 1f, scaleY = 1f) {
-                    openStrings.forEach {
-                        drawCircle(
-                            color = primaryColor,
-                            radius = 8.dp.toPx(),
-                            style = Stroke(width = 2.dp.toPx()),
-                            center =
-                                Offset(
-                                    x = -8.dp.toPx() + -4.dp.toPx(),
-                                    y = offsetY * (it - 1).toFloat(),
-                                ),
-                        )
-                    }
+        VoicingPager(
+            selectedIndex = uiState.voicingIndex,
+            total = uiState.voicings.size,
+            onPrevious = { viewModel.previousVoicing() },
+            onNext = { viewModel.nextVoicing() },
+        )
 
-                    muteStrings.forEach {
-                        val centerX = -8.dp.toPx() + -4.dp.toPx()
-                        val centerY = offsetY * (it - 1).toFloat()
-                        val halfSize = 8.dp.toPx()
-                        drawLine(
-                            color = primaryColor,
-                            start = Offset(centerX - halfSize, centerY - halfSize),
-                            end = Offset(centerX + halfSize, centerY + halfSize),
-                            strokeWidth = 2.dp.toPx(),
-                        )
-                        drawLine(
-                            color = primaryColor,
-                            start = Offset(centerX + halfSize, centerY - halfSize),
-                            end = Offset(centerX - halfSize, centerY + halfSize),
-                            strokeWidth = 2.dp.toPx(),
-                        )
-                    }
-
-                    // 開始の太線
-                    drawLine(
-                        color = firstLineColor,
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, size.height),
-                        strokeWidth = 2.dp.toPx(),
-                    )
-                    // 基準の線を描画
-                    for (i in 0..5) {
-                        drawLine(
-                            color = outline,
-                            start = Offset(0f, offsetY * i),
-                            end = Offset(x = size.width, offsetY * i),
-                            strokeWidth = 2.dp.toPx(),
-                        )
-                    }
-
-                    // フレットの縦線と番号を描画
-                    for (i in 1..4) {
-                        drawLine(
-                            color = outline,
-                            start = Offset(x = offsetX * i, y = 0f),
-                            end = Offset(x = offsetX * i, y = size.height),
-                            strokeWidth = 2.dp.toPx(),
-                        )
-
-                        val textResult = text.measure((startFret + i).toString())
-                        val textCenter =
-                            Offset(
-                                x = offsetX * i - offsetX / 2,
-                                y = -40.dp.toPx() + textResult.size.height / 2,
-                            )
-                        scale(
-                            scaleX = if (setting.lefty) -1f else 1f,
-                            scaleY = 1f,
-                            pivot = textCenter,
-                        ) {
-                            drawText(
-                                textLayoutResult = textResult,
-                                color = textColor,
-                                topLeft =
-                                    Offset(
-                                        x = textCenter.x - textResult.size.width / 2,
-                                        y = textCenter.y - textResult.size.height / 2,
-                                    ),
-                            )
-                        }
-                    }
-
-                    // 指の位置を描画
-                    DrawFingers(
-                        textMeasurer = fingerText,
-                        firstFlet = startFret,
-                        fingers = fingers,
-                        fingerNameList = fingerNameList,
-                        offsetX = offsetX,
-                        offsetY = offsetY,
-                        primary = primaryColor,
-                        background = background,
-                        isLefty = setting.lefty,
-                    )
-                }
-            }
-        }
         AlphabetButtons(uiState, { viewModel.setAlphabet(it) }) {
             viewModel.setSharp(it)
         }
         TypeButtons(uiState) { viewModel.setType(it) }
+
+        // 選択中以外の押さえ方は、ボタンの下に小さく並べる
+        OtherVoicings(
+            voicings = uiState.voicings,
+            selectedIndex = uiState.voicingIndex,
+            isLefty = setting.lefty,
+        )
+    }
+}
+
+/**
+ * 前後の押さえ方へ切り替えるボタン。
+ * ラベルの文字数が変わってもボタン位置が動かないよう、ボタンを両端に固定し、間にラベルを置く。
+ * 押さえ方が1つ以下のときもボタンは無効にして表示し続け、コード選択で画面の高さが変わらないようにする。
+ */
+@Composable
+private fun VoicingPager(
+    selectedIndex: Int,
+    total: Int,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
+) {
+    val canSwitch = total > 1
+
+    // タブレットなど広い画面で < > が端に離れすぎないよう、幅に上限を付けて中央に寄せる
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 280.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedButton(onClick = onPrevious, enabled = canSwitch) {
+                Text("<")
+            }
+            Text(
+                text = if (total == 0) "- / -" else "${selectedIndex + 1} / $total",
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(horizontal = 12.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            OutlinedButton(onClick = onNext, enabled = canSwitch) {
+                Text(">")
+            }
+        }
+    }
+}
+
+/**
+ * 選択中(大きく表示中)以外の押さえ方を、縮小した指板図で2列に並べる。
+ * 番号は押さえ方全体での位置(1始まり)で、切り替えても各押さえ方の番号は変わらない。
+ */
+@Composable
+private fun OtherVoicings(
+    voicings: List<ChordVoicing>,
+    selectedIndex: Int,
+    isLefty: Boolean,
+) {
+    val others = voicings.withIndex().filter { it.index != selectedIndex }
+    if (others.isEmpty()) return
+
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 32.dp, bottom = 24.dp)) {
+        Text(
+            text = stringResource(Res.string.other_voicings),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        others.chunked(2).forEach { rowItems ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                rowItems.forEach { (index, voicing) ->
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = (index + 1).toString(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 16.dp),
+                        )
+                        ChordDiagram(
+                            voicing = voicing,
+                            isLefty = isLefty,
+                            sizeScale = 0.6f,
+                        )
+                    }
+                }
+                // 奇数個の場合、最後の行の空きを埋めて幅を揃える
+                if (rowItems.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
     }
 }
 
@@ -267,7 +221,7 @@ private fun ColumnScope.AlphabetButtons(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(top = 30.dp),
+                .padding(top = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChordOutlineButton(
@@ -324,80 +278,6 @@ private fun ColumnScope.TypeButtons(
                 type = type,
                 uiState = uiState,
             ) { setType(type) }
-        }
-    }
-}
-
-private fun DrawScope.DrawFingers(
-    textMeasurer: TextMeasurer,
-    firstFlet: Int,
-    fingers: List<Chord.FingerPosition>,
-    fingerNameList: List<String>,
-    offsetX: Float,
-    offsetY: Float,
-    primary: Color,
-    background: Color,
-    isLefty: Boolean,
-) {
-    fingers.forEachIndexed { index, finger ->
-        if (finger.fret == 0) {
-            // フレットが0の場合は開放弦なので表示しない
-            return@forEachIndexed
-        }
-        val x = (finger.fret - firstFlet) * offsetX - (offsetX / 2)
-        val y = (finger.string.start - 1) * offsetY
-        //  複数弦押しの場合は、RoundRectを利用して描画する
-        val radius = 16.dp.toPx()
-        val textResult = textMeasurer.measure(fingerNameList[index])
-
-        // 単弦でも複数弦でも同じロジックで処理
-        val endY = (finger.string.last - 1) * offsetY
-        val circleSize = radius * 2
-        val height =
-            if (finger.string.start == finger.string.last) {
-                circleSize
-            } else {
-                endY - y + circleSize
-            }
-
-        // Stroke単体だと線が重なるのでbgと同じ色を重ねて消す
-        drawRoundRect(
-            color = background,
-            style = Fill,
-            topLeft = Offset(x - radius, y - radius),
-            size = Size(circleSize, height),
-            cornerRadius = CornerRadius(radius, radius),
-        )
-
-        drawRoundRect(
-            color = primary,
-            style = Stroke(width = 2.dp.toPx()),
-            topLeft = Offset(x - radius, y - radius),
-            size = Size(circleSize, height),
-            cornerRadius = CornerRadius(radius, radius),
-        )
-
-        // テキストの中心位置を計算
-        val textCenterY =
-            if (finger.string.start == finger.string.last) {
-                y
-            } else {
-                (y + endY) / 2
-            }
-
-        val textCenter = Offset(x = x, y = textCenterY)
-
-        // 文字の中心から左右反転して、文字だけ正しい位置に調整
-        scale(scaleX = if (isLefty) -1f else 1f, scaleY = 1f, pivot = textCenter) {
-            drawText(
-                textLayoutResult = textResult,
-                color = primary,
-                topLeft =
-                    Offset(
-                        x = textCenter.x - textResult.size.width / 2,
-                        y = textCenter.y - textResult.size.height / 2,
-                    ),
-            )
         }
     }
 }

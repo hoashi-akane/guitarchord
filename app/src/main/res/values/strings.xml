@@ -10,5 +10,4 @@
     <string name="setting_theme_mono">Mono theme</string>
     <string name="privacy_options">Privacy options</string>
     <string name="licenses">Licenses</string>
-    <string name="chords_db_debug">Chords-db check (debug)</string>
 </resources>

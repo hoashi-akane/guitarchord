@@ -1,32 +1,37 @@
 package jp.ahoashi.guitarchord.chordsdb
 
 import jp.ahoashi.guitarchord.chordsdb.model.ChordVoicing
-import jp.ahoashi.guitarchord.entity.Chord
 
 /**
- * 既存のCanvas描画ロジック(ChordScreen.kt)が前提とする Chord.Fingers 形式に変換する。
- * chords-dbはミュート(-1)/開放(0)/フレット済み(finger 1-4)を明示するため、
- * 既存の muteString のような推測ロジックは使わず、実データからそのまま組み立てる。
+ * 指板図に描く「1本の指」。同じ指が複数弦を押さえる場合(バレー)は、その弦の範囲をまとめて持つ。
  */
-fun ChordVoicing.toDrawableFingers(): Chord.Fingers {
-    val frettedByFinger = strings
-        .filter { it.fret > 0 }
+data class DiagramFinger(
+    // 1(人差し指)〜4(小指)
+    val finger: Int,
+    // 絶対フレット
+    val fret: Int,
+    // 押さえている弦(1=高音側〜6=低音側)。バレーなら複数弦にまたがる。
+    val strings: IntRange,
+)
+
+/**
+ * chords-dbは各弦のフレットと指をそのまま持つので、同じ指番号の弦をまとめて描画用の指に変換する。
+ * バレーで他の指がより高いフレットを押さえている弦は、その指の弦として扱われ、
+ * バレーの指は両端の弦の範囲(最小〜最大)にまたがって描かれる。
+ */
+fun ChordVoicing.diagramFingers(): List<DiagramFinger> =
+    strings
+        .filter { it.fret > 0 && it.finger in 1..4 }
         .groupBy { it.finger }
-
-    fun position(fingerNumber: Int): Chord.FingerPosition {
-        val group = frettedByFinger[fingerNumber] ?: return Chord.FingerPosition.EMPTY
-        val fret = group.first().fret
-        val stringNumbers = group.map { it.stringNumber }
-        return Chord.FingerPosition(fret = fret, string = stringNumbers.min()..stringNumbers.max())
-    }
-
-    return Chord.Fingers(
-        index = position(1),
-        middle = position(2),
-        ling = position(3),
-        little = position(4),
-    )
-}
+        .map { (finger, group) ->
+            val stringNumbers = group.map { it.stringNumber }
+            DiagramFinger(
+                finger = finger,
+                fret = group.first().fret,
+                strings = stringNumbers.min()..stringNumbers.max(),
+            )
+        }
+        .sortedBy { it.finger }
 
 fun ChordVoicing.openStringNumbers(): Set<Int> =
     strings.filter { it.fret == 0 }.map { it.stringNumber }.toSet()

@@ -10,5 +10,4 @@
     <string name="setting_theme_mono">モノクロテーマ</string>
     <string name="privacy_options">プライバシー設定</string>
     <string name="licenses">ライセンス</string>
-    <string name="chords_db_debug">chords-db確認（デバッグ）</string>
 </resources>

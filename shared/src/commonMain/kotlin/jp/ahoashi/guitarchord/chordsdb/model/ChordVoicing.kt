@@ -11,7 +11,14 @@ data class ChordVoicing(
     val strings: List<StringFret>,
     val barres: List<Int>,
     val isCapoSuggested: Boolean,
+    // ビルトイン(chords-db)か、ユーザーが追加したものか。UIで区別できるようにするため。
+    val source: VoicingSource = VoicingSource.BUILTIN,
 )
+
+enum class VoicingSource {
+    BUILTIN,
+    USER,
+}
 
 data class StringFret(
     // 1(1弦/高音側)〜6(6弦/低音側)
