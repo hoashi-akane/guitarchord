@@ -74,6 +74,53 @@ class ChordVoicingRepositoryImplTest {
     }
 
     @Test
+    fun firstVoicingOfEveryNaturalChordHasTheChordTones() = runTest {
+        // 旧実装を1つ目にしているため、旧実装の入力ミス(構成音の欠け・余分)が混ざっていないことを保証する
+        val roots = mapOf("C" to 0, "D" to 2, "E" to 4, "F" to 5, "G" to 7, "A" to 9, "B" to 11)
+        // 根音からの半音数。required=コードの性格を決める音(欠けたら誤り)、all=許される音
+        val tones =
+            mapOf(
+                TYPE.MAJOR to (setOf(0, 4) to setOf(0, 4, 7)),
+                TYPE.MINOR to (setOf(0, 3) to setOf(0, 3, 7)),
+                TYPE.M7 to (setOf(0, 4, 11) to setOf(0, 4, 7, 11)),
+                TYPE.SEVENTH to (setOf(0, 4, 10) to setOf(0, 4, 7, 10)),
+                TYPE.MINOR7 to (setOf(0, 3, 10) to setOf(0, 3, 7, 10)),
+                TYPE.MM7 to (setOf(0, 3, 11) to setOf(0, 3, 7, 11)),
+                TYPE.SUS4 to (setOf(0, 5) to setOf(0, 5, 7)),
+                TYPE.SEVEN_SUS4 to (setOf(0, 5, 10) to setOf(0, 5, 7, 10)),
+                TYPE.ADD9 to (setOf(0, 4, 2) to setOf(0, 4, 7, 2)),
+                TYPE.MADD9 to (setOf(0, 3, 2) to setOf(0, 3, 7, 2)),
+            )
+        val openStrings = listOf(40, 45, 50, 55, 59, 64) // 6弦→1弦(E2 A2 D3 G3 B3 E4)
+
+        for ((alphabet, root) in roots) {
+            for (type in TYPE.entries) {
+                val first = repository().findChordVoicingSet(alphabet, sharp = false, type = type)!!.voicings.first()
+                val played =
+                    first.strings
+                        .sortedByDescending { it.stringNumber }
+                        .withIndex()
+                        .filter { it.value.fret >= 0 }
+                        .map { (openStrings[it.index] + it.value.fret - root).mod(12) }
+                        .toSet()
+                val (required, allowed) = tones.getValue(type)
+                val label = "$alphabet ${type.displayName} ${first.tab()}"
+                assertTrue(played.containsAll(required), "$label: 構成音が欠けている(半音数 ${required - played})")
+                assertTrue(allowed.containsAll(played), "$label: 構成音以外が鳴っている(半音数 ${played - allowed})")
+            }
+        }
+    }
+
+    @Test
+    fun cMadd9DoesNotContainTheMistakenLegacyVoicing() = runTest {
+        val tabs = repository().findChordVoicingSet("C", sharp = false, type = TYPE.MADD9)!!.voicings.map { it.tab() }
+
+        // 旧実装の x32033 は E♭ がなく E が鳴る誤りだったため取り込んでいない
+        assertTrue("x32033" !in tabs, "誤った押さえ方が残っている: $tabs")
+        assertEquals("x31033", tabs.first())
+    }
+
+    @Test
     fun noOpUserDataSourceAlwaysReturnsEmpty() = runTest {
         val voicings = NoOpUserChordVoicingDataSource().findUserVoicings("C", "major")
         assertTrue(voicings.isEmpty())
