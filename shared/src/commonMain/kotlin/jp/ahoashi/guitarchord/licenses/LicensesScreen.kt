@@ -122,7 +122,7 @@ private fun LibraryLicense.sortKey(): String =
 private val manualAcknowledgements = listOf(
     LibraryLicense(
         name = "@tombatossals/chords-db",
-        version = "0.5.1",
+        version = "0.6.0 (df06fa7)",
         license = "MIT",
         url = "https://github.com/tombatossals/chords-db",
     ),
