@@ -9,5 +9,5 @@ import org.koin.dsl.module
 
 val appModule = module {
     single<SettingsRepository> { SettingsRepositoryImpl(androidContext()) }
-    viewModel { ChordScreenViewModel(get()) }
+    viewModel { ChordScreenViewModel(get(), get()) }
 }

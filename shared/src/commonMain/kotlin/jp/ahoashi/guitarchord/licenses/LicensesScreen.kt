@@ -109,10 +109,24 @@ private suspend fun loadAllLicenses(): List<LibraryLicense> {
             }
     }.getOrDefault(emptyList())
 
-    return (gradleLicenses + iosLicenses)
+    return (gradleLicenses + iosLicenses + manualAcknowledgements)
         .distinctBy { it.name.lowercase() }
-        .sortedBy { it.name.lowercase() }
+        .sortedBy { it.sortKey() }
 }
+
+// npmのスコープ付き名("@scope/name")は、"@"で先頭に固まらないようスコープを除いた名前で並べる
+private fun LibraryLicense.sortKey(): String =
+    (if (name.startsWith("@")) name.substringAfter('/') else name).lowercase()
+
+// Gradle依存/iOS SPM依存の自動収集の対象外（アセットとして同梱しているデータ）のライセンス表示。
+private val manualAcknowledgements = listOf(
+    LibraryLicense(
+        name = "@tombatossals/chords-db",
+        version = "0.6.0 (df06fa7)",
+        license = "MIT",
+        url = "https://github.com/tombatossals/chords-db",
+    ),
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

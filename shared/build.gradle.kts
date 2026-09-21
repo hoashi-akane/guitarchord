@@ -50,6 +50,10 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
+        }
     }
 }
 
